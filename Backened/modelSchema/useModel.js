@@ -19,10 +19,20 @@ const userSchema = new mongoose.Schema({
    about: {
      type: String
    },
+      age: {
+     type: Number
+   },
    skills: {
      type: [String],
      default: []
-   }
+   },
+   gender: {
+     type: String,
+      reuired: true,
+      enum:{
+          values :  ["male","female","other"],
+        }
+   },
 },
 { timestamps: true })
 

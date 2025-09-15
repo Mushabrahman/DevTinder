@@ -5,7 +5,7 @@ const User = require("../modelSchema/useModel");
 
 const router = express.Router();
 
-router.post('/api/request/send/:status/:toUserId',authUser,async (req, res) => {
+router.post('/api/request/send/:status/:toUserId', authUser, async (req, res) => {
     try {
 
         const fromUserId = req.user._id;
@@ -18,90 +18,98 @@ router.post('/api/request/send/:status/:toUserId',authUser,async (req, res) => {
             status
         })
 
-        // if(ConnectionRequest.fromUserId.equals(ConnectionRequest.toUserId)){
-        //     throw new error(`connection request is invalid`);   
-        // }
-        
-        allowedStatus = ["ignore","interested"];
-
-        if(!allowedStatus.includes(status)){
-            throw new error(`invalid type status ${status}`);
+        if (fromUserId.equals(toUserId)) {
+            throw new Error(`connection request is invalid`);
         }
 
-        if(!await User.findById(toUserId)){
-          throw new error(`User not found`);   
+        allowedStatus = ["ignore", "interested"];
+
+        if (!allowedStatus.includes(status)) {
+            throw new Error(`invalid type status ${status}`);
         }
 
-       const existingConnectionRequest = await ConnectionRequest.findOne({
-         $or : [
-            {fromUserId,toUserId},
-            {toUserId:fromUserId,fromUserId:toUserId}
-        ]
-       })
+        if (!await User.findById(toUserId)) {
+            throw new Error(`User not found`);
+        }
 
-       if(existingConnectionRequest){
-          throw new error(`connection request already send`);
-       }
+        const existingConnectionRequest = await ConnectionRequest.findOne({
+            $or: [
+                { fromUserId, toUserId },
+                { toUserId: fromUserId, fromUserId: toUserId }
+            ]
+        })
 
-        const saveData =  await userRequestField.save();
+        if (existingConnectionRequest) {
+            throw new Error(`connection request already send`);
+        }
+
+        const saveData = await userRequestField.save();
 
         res.status(200).json({
             message: "Connection Request successfully",
-            saveData});
+            saveData
+        });
 
     } catch (error) {
-         res.status(404).json(error.message);
+        res.status(400).json({ message: err.message });
     }
 })
-router.post('/api/request/review/:status/:toUserId',authUser,async (req, res) => {
-    try{
-       const LogedinUser = req.user;
-       const status = req.params.status;
-       const requestId = req.params.requestId
 
-       const allowedStatus = [accepted,rejected];
+router.post('/api/request/review/:status/:toUserId', authUser, async (req, res) => {
+    try {
+        const LogedinUser = req.user;
+        const status = req.params.status;
+        const requestId = req.params.toUserId
 
-       if(!status.includes(allowedStatus)){
-        throw new error(`invalid type status ${status}`)
-       }
-
-       const connectionRequest = ConnectionRequest.findOne({
-        status: "interested",
-        toUserId: LogedinUser._id,
-        _id: requestId
-    })
-
-       if(!connectionRequest){
-        throw new error("Connection request not found");
-       }
-
-       connectionRequest.status = status;
        
-       const data = await connectionRequest.save();
 
-       res.status(200).json({
+        const allowedStatus = ["accepted", "rejected"];
+
+        if (!allowedStatus.includes(status)) {
+            throw new Error(`invalid type status ${status}`)
+        }
+
+        const connectionRequest =await ConnectionRequest.findOne({
+            status: "interested",
+            toUserId: LogedinUser._id,
+            fromUserId: requestId
+        })
+
+   
+
+        if (!connectionRequest) {
+            throw new Error("Connection request not found");
+        }
+
+        connectionRequest.status = status;
+
+        const data = await connectionRequest.save();
+
+        res.status(200).json({
             message: `Connection request ${status} successfully`,
-            data});
+            data
+        });
 
     }
-    catch (error) {
-     res.status(400).json({
-        message:error.message
-     })
+    catch (Error) {
+        res.status(400).json({
+            message: Error.message
+        })
     }
 }
 )
-router.get('/api/request/received',authUser,async(req,res) =>{
-    try{
-   
+
+router.get('/api/request/received', authUser, async (req, res) => {
+    try {
+
         const LogedinUser = req.user;
-         
+
         const allRequests = await ConnectionRequest.find({
             toUserId: LogedinUser._id,
             status: "interested",
-        }).populate("fromUserId",["firstName","lastName"]);
-    
-        if(!allRequests){
+        }).populate("fromUserId", ["firstName", "lastName", "gender", "about", "skills", "age"]);
+
+        if (!allRequests) {
             throw new Error("No request found");
         }
 
@@ -111,20 +119,21 @@ router.get('/api/request/received',authUser,async(req,res) =>{
         })
 
     }
-    catch(error){
-        res.status(404).json({message:error.message});
+    catch (Error) {
+        res.status(404).json({ message: Error.message });
     }
 })
-router.get('/api/feed',authUser,async (req, res) => {
+
+router.get('/api/feed', authUser, async (req, res) => {
     try {
 
         const LogedinUser = req.user;
 
         const page = parseInt(req.query.page) || 1;
-        let  limit = parseInt(req.query.limit) || 10;
-        limit = limit>50? 50: limit;
+        let limit = parseInt(req.query.limit) || 100;
+        limit = limit > 50 ? 50 : limit;
 
-        const skip = (page-1)*limit;
+        const skip = (page - 1) * limit;
 
         const exceptionalRequests = await ConnectionRequest.find({
             $or: [{ fromUserId: LogedinUser._id }, { toUserId: LogedinUser._id }]
@@ -139,17 +148,43 @@ router.get('/api/feed',authUser,async (req, res) => {
 
         const allFeed = await User.find({
             $and: [{ _id: { $nin: Array.from(hiddenRequests) } },
-            { _id: { $ne: loginUser._id } }
+            { _id: { $ne: LogedinUser._id } }
             ]
-        }).select("firstName lastName skills  about").skip(skip).limit(limit)
+        }).select("firstName lastName skills  about age gender").skip(skip).limit(limit)
 
         res.status(200).json({
             data: allFeed
         })
 
     }
-    catch (error) {
-        res.status(400).json({ message: error.message });
+    catch (Error) {
+        res.status(400).json({ message: Error.message });
+    }
+})
+
+router.get('/api/connections', authUser, async (req, res) => {
+    try {
+        const LogedinUser = req.user;
+
+        const connections =await ConnectionRequest.find({
+            status: "accepted",
+            toUserId: LogedinUser._id,
+        }).populate("fromUserId", ["firstName", "lastName", "gender", "about", "skills", "age"]);
+
+        if (!connections) {
+            throw new Error("Connections request not found");
+        }
+
+        res.status(200).json({
+            message: `Connections fetched successfully`,
+            data: connections
+        });
+
+
+    } catch (err) {
+        res.status(400).json({
+            message: Error.message
+        })
     }
 })
 

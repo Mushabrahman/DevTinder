@@ -20,7 +20,6 @@ function Body() {
       const fetchProfile = await axios.get("/api/profile", {
         withCredentials: true
       });
-
       dispatch(addUser(fetchProfile.data));
 
     }

@@ -3,6 +3,7 @@ const connectDB = require("./db");
 const cors = require('cors');
 const app = express();
 const userRoutes = require("./routes/useRoutes");
+const connectionRoutes = require("./routes/connectionRequestRoutes")
 const cookieParser = require('cookie-parser');
 
 app.use(cors());
@@ -12,6 +13,7 @@ app.use(cookieParser());
 const port = 8000;
 
 app.use(userRoutes);
+app.use(connectionRoutes);
 
 
 async function startServer() {

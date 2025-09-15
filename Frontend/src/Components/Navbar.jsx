@@ -2,6 +2,7 @@ import axios from 'axios'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, useNavigate } from 'react-router-dom'
 import { removeUser } from '../utils/userSlice'
+import { removeFeed } from '../utils/feedSlice'
 
 function Navbar() {
 
@@ -11,11 +12,11 @@ function Navbar() {
 
   const handleClick = async () => {
     try {
-   const res =  await  axios.post("/api/logout", {}, {
+      const res = await axios.post("/api/logout", {}, {
         withCredentials: true
       })
-      console.log( res.data)
       dispatch(removeUser());
+      dispatch(removeFeed());
       return navigate("/login")
     } catch (err) {
     }
@@ -28,7 +29,7 @@ function Navbar() {
           <Link to="/" className="btn btn-ghost text-xl">DevTinder</Link>
         </div>
         {user && (<div className="flex gap-2 items-center">
-          <p className='px-4'>Welcome, {user.firstName}</p>
+          <p className=' font-semibold text-lg'>Welcome, {user?.user?.firstName}</p>
           <div className="dropdown dropdown-end mx-5">
             <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
               <div className="w-10 rounded-full ">
@@ -47,6 +48,8 @@ function Navbar() {
                 </Link>
               </li>
               <li><Link to="/Feed">Feed</Link></li>
+              <li><Link to="/Connections">Connections</Link></li>
+              <li><Link to="/ConnectionRequest">Requests</Link></li>
               <li><a onClick={handleClick}>Logout</a></li>
             </ul>
           </div>
