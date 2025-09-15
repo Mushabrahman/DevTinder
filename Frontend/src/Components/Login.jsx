@@ -11,7 +11,7 @@ function Login() {
     const [password, setPassword] = useState('');
     const [firstName, setFirstName] = useState('')
     const [lastName, setLastName] = useState('');
-    const [isLogedin, setIsLogedin] = useState(false);
+    const [isLogedin, setIsLogedin] = useState(true);
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
