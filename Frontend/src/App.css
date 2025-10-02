@@ -1,2 +1,8 @@
 @import "tailwindcss";
 @plugin "daisyui";
+
+@media (max-width: 630px) {
+  .login-extra-margin {
+    margin-bottom: 70px; /* same as mt-20 in Tailwind */
+  }
+}

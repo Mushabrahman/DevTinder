@@ -1,63 +1,104 @@
-import axios from 'axios'
-import { useDispatch, useSelector } from 'react-redux'
-import { Link, useNavigate } from 'react-router-dom'
-import { removeUser } from '../utils/userSlice'
-import { removeFeed } from '../utils/feedSlice'
+import axios from 'axios';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
+import { removeUser } from '../utils/userSlice';
+import { removeFeed } from '../utils/feedSlice';
 
 function Navbar() {
-
-  const user = useSelector(store => store.user)
-  const dispatch = useDispatch()
-  const navigate = useNavigate()
+  const user = useSelector((store) => store.user);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleClick = async () => {
     try {
-      const res = await axios.post("/api/logout", {}, {
-        withCredentials: true
-      })
+      await axios.post(
+        '/api/logout',
+        {},
+        { withCredentials: true }
+      );
       dispatch(removeUser());
       dispatch(removeFeed());
-      return navigate("/login")
+      navigate('/login');
     } catch (err) {
+     
     }
-  }
+  };
 
   return (
-    <>
-      <div className="navbar bg-neutral text-neutral-content shadow-sm">
-        <div className="flex-1">
-          <Link to="/" className="btn btn-ghost text-xl">DevTinder</Link>
-        </div>
-        {user && (<div className="flex gap-2 items-center">
-          <p className=' font-semibold text-lg'>Welcome, {user?.user?.firstName}</p>
-          <div className="dropdown dropdown-end mx-5">
-            <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
-              <div className="w-10 rounded-full ">
+    <div className="navbar bg-neutral text-neutral-content shadow-sm px-4 sm:px-6">
+      <div className="flex-1">
+        <Link
+          to="/"
+          className="btn btn-ghost text-lg sm:text-xl md:text-2xl font-bold"
+        >
+          DevTinder
+        </Link>
+      </div>
+
+      {user && (
+        <div className="flex items-center gap-2 sm:gap-4">
+          <p className="font-semibold text-sm sm:text-base md:text-lg">
+            Welcome, {user?.user?.firstName}
+          </p>
+
+          {/* Mobile Dropdown */}
+          <div className="dropdown dropdown-end">
+            <div
+              tabIndex={0}
+              role="button"
+              className="btn btn-ghost btn-circle avatar"
+            >
+              <div className="w-8 sm:w-10 rounded-full">
                 <img
-                  alt="Tailwind CSS Navbar component"
-                  src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+                  alt="Avatar"
+                  src={user?.user?.profilePhoto}
+                />
               </div>
             </div>
+
             <ul
               tabIndex={0}
-              className="menu menu-sm dropdown-content bg-neutral text-neutral-content rounded-box z-1 mt-3 w-52 p-2 shadow">
+              className="menu menu-sm dropdown-content bg-neutral text-neutral-content rounded-box z-50 mt-3 w-40 sm:w-52 p-2 shadow"
+            >
               <li>
-                <Link to="/Profile" className="justify-between">
-                  Profile
-                  <span className="badge">New</span>
+                <Link to="/Profile" className="justify-between text-sm sm:text-base">
+                  Profile <span className="badge">New</span>
                 </Link>
               </li>
-              <li><Link to="/Feed">Feed</Link></li>
-              <li><Link to="/Connections">Connections</Link></li>
-              <li><Link to="/ConnectionRequest">Requests</Link></li>
-              <li><a onClick={handleClick}>Logout</a></li>
+              <li>
+                <Link to="/Feed" className="text-sm sm:text-base">
+                  Feed
+                </Link>
+              </li>
+              <li>
+                <Link to="/Connections" className="text-sm sm:text-base">
+                  Connections
+                </Link>
+              </li>
+              <li>
+                <Link to="/ConnectionRequest" className="text-sm sm:text-base">
+                  Requests
+                </Link>
+              </li>
+              <li>
+                <Link to="/Premium" className="text-sm sm:text-base">
+                  Premium
+                </Link>
+              </li>
+              <li>
+                <button
+                  onClick={handleClick}
+                  className="text-sm sm:text-base w-full text-left"
+                >
+                  Logout
+                </button>
+              </li>
             </ul>
           </div>
-        </div>)}
-
-      </div>
-    </>
-  )
+        </div>
+      )}
+    </div>
+  );
 }
 
-export default Navbar
+export default Navbar;

@@ -4,6 +4,7 @@ const cors = require('cors');
 const app = express();
 const userRoutes = require("./routes/useRoutes");
 const connectionRoutes = require("./routes/connectionRequestRoutes")
+const paymentRoutes = require("./routes/paymentRoutes")
 const cookieParser = require('cookie-parser');
 
 app.use(cors());
@@ -14,7 +15,7 @@ const port = 8000;
 
 app.use(userRoutes);
 app.use(connectionRoutes);
-
+app.use(paymentRoutes);
 
 async function startServer() {
     try {

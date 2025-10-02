@@ -6,6 +6,7 @@ import Login from './Components/Login'
 import Feed from './Components/Feed.jsx'
 import ConnectionRequest from './Components/ConnectionRequest.jsx'
 import Connections from './Components/Connections'
+import Premium from './Components/Premium.jsx'
 
 function App() {
 
@@ -20,6 +21,7 @@ function App() {
             <Route path='/Login' element={<Login />} />
             <Route path='/ConnectionRequest' element={<ConnectionRequest />} />
             <Route path='/Connections' element={<Connections />} />
+             <Route path='/Premium' element={<Premium />} />
           </Route>
         </Routes>
       </BrowserRouter>

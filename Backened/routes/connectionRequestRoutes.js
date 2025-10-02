@@ -107,7 +107,7 @@ router.get('/api/request/received', authUser, async (req, res) => {
         const allRequests = await ConnectionRequest.find({
             toUserId: LogedinUser._id,
             status: "interested",
-        }).populate("fromUserId", ["firstName", "lastName", "gender", "about", "skills", "age"]);
+        }).populate("fromUserId", ["firstName", "lastName", "gender", "about", "skills", "age", "profilePhoto"]);
 
         if (!allRequests) {
             throw new Error("No request found");
@@ -150,7 +150,7 @@ router.get('/api/feed', authUser, async (req, res) => {
             $and: [{ _id: { $nin: Array.from(hiddenRequests) } },
             { _id: { $ne: LogedinUser._id } }
             ]
-        }).select("firstName lastName skills  about age gender").skip(skip).limit(limit)
+        }).select("firstName lastName skills  about age gender profilePhoto").skip(skip).limit(limit)
 
         res.status(200).json({
             data: allFeed
@@ -169,7 +169,7 @@ router.get('/api/connections', authUser, async (req, res) => {
         const connections =await ConnectionRequest.find({
             status: "accepted",
             toUserId: LogedinUser._id,
-        }).populate("fromUserId", ["firstName", "lastName", "gender", "about", "skills", "age"]);
+        }).populate("fromUserId", ["firstName", "lastName", "gender", "about", "skills", "age", "profilePhoto"]);
 
         if (!connections) {
             throw new Error("Connections request not found");

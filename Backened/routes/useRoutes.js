@@ -8,18 +8,18 @@ const router = express.Router();
 
 router.post('/api/signup', async (req, res) => {
     try {
-        const { password,emailId, ...rest } = req.body;
+        const { password, emailId, ...rest } = req.body;
 
-         const user = await User.findOne({ emailId: emailId });
+        const user = await User.findOne({ emailId: emailId });
 
-         if(user){
+        if (user) {
             throw new Error("Enter unique credentials!")
-         }
+        }
 
         const saltRound = 10;
         const hashPassword = await bcrypt.hash(password, saltRound);
 
-        const newUser = new User({ ...rest,emailId, password: hashPassword })
+        const newUser = new User({ ...rest, emailId, password: hashPassword })
 
         const save = await newUser.save();
         console.log(save)
@@ -38,8 +38,6 @@ router.post("/api/login", async (req, res) => {
             return res.status(400).json({ error: 'Email and password are required' });
         }
 
-        console.log(emailId,password)
-
         const user = await User.findOne({ emailId: emailId });
         if (!user) {
             throw new Error("Credential not found")
@@ -52,7 +50,7 @@ router.post("/api/login", async (req, res) => {
 
         if (await result) {
             const token = jwt.sign({ id: user._id, email: user.emailId }, " your_very_secure_secret_here", {
-                expiresIn: "1h"
+                expiresIn: "72h"
             })
             res.cookie('accessToken', token);
             res.status(201).json({
@@ -92,7 +90,7 @@ router.get('/api/profile', authUser, async (req, res) => {
 
 router.patch('/api/editUser', authUser, async (req, res) => {
     try {
-        const allowedFields = ["firstName", "lastName", "about", "skills", "age", "gender"];
+        const allowedFields = ["firstName", "lastName", "about", "skills", "age", "gender","profilePhoto"];
 
         const arr = Object.keys(req.body);
 
