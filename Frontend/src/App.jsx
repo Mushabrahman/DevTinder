@@ -7,6 +7,7 @@ import Feed from './Components/Feed.jsx'
 import ConnectionRequest from './Components/ConnectionRequest.jsx'
 import Connections from './Components/Connections'
 import Premium from './Components/Premium.jsx'
+import Chat from './Components/Chat.jsx'
 
 function App() {
 
@@ -21,7 +22,8 @@ function App() {
             <Route path='/Login' element={<Login />} />
             <Route path='/ConnectionRequest' element={<ConnectionRequest />} />
             <Route path='/Connections' element={<Connections />} />
-             <Route path='/Premium' element={<Premium />} />
+            <Route path='/Premium' element={<Premium />} />
+            <Route path='/Chat/:toUserId' element={<Chat />} />
           </Route>
         </Routes>
       </BrowserRouter>

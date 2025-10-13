@@ -2,14 +2,16 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addConnectionRequest } from "../utils/connectionRequestSlice";
-import { removeFeed } from "../utils/feedSlice";
+import { removeConnectionRequest } from "../utils/connectionRequestSlice";
 
 export default function ConnectionRequest() {
     const [error, setError] = useState(null);
     const dispatch = useDispatch();
     const requests = useSelector((store) => store.requests);
+    const [loading, setLoading] = useState(false);
 
     const connectionRequestFetch = async () => {
+        setLoading(true);
         try {
             const res = await axios.get("/api/request/received", {
                 withCredentials: true,
@@ -17,6 +19,8 @@ export default function ConnectionRequest() {
             dispatch(addConnectionRequest(res.data.data));
         } catch (err) {
             setError(err.message);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -24,18 +28,27 @@ export default function ConnectionRequest() {
         connectionRequestFetch();
     }, []);
 
-    const handleClick = async (status, id) => {
+    const handleClick = async (status, _id) => {
         try {
+            console.log("handleClick:", status, _id);
             const updateStatus = await axios.post(
-                "/api/request/review/" + status + "/" + id,
+                "/api/request/review/" + status + "/" + _id,
                 {},
                 { withCredentials: true }
-            );
-            dispatch(removeFeed(id));
+            )
+            dispatch(removeConnectionRequest(_id));
         } catch (err) {
             setError(err.message);
         }
     };
+
+     if (loading) {
+    return (
+      <div className="mt-16 flex justify-center h-full text-lg text-white">
+        Loading requests...
+      </div>
+    );
+  }
 
     if (error) {
         return (
@@ -85,13 +98,13 @@ export default function ConnectionRequest() {
 
                         <div className="flex gap-3 sm:gap-5 mt-3 sm:mt-0">
                             <button
-                                className="px-4 py-2 border-2 border-blue-500 rounded-lg text-blue-400 text-sm sm:text-base cursor-pointer"
+                                className="px-4 py-2 border-2 border-blue-500 hover:border-blue-600 hover:text-blue-600  rounded-lg text-blue-400 text-sm sm:text-base cursor-pointer"
                                 onClick={() => handleClick("accepted", _id)}
                             >
                                 Accept
                             </button>
                             <button
-                                className="px-4 py-2 border-2 border-pink-500 rounded-lg text-pink-500 text-sm sm:text-base cursor-pointer"
+                                className="px-4 py-2 border-2 border-pink-500 hover:border-pink-700 hover:text-pink-700 rounded-lg text-pink-500 text-sm sm:text-base cursor-pointer"
                                 onClick={() => handleClick("rejected", _id)}
                             >
                                 Reject

@@ -13,7 +13,6 @@ function UserCard({ user }) {
         {},
         { withCredentials: true }
       );
-      console.log(res.data.saveData);
       dispatch(addConnectionRequest(res.data.saveData));
       dispatch(removeFeed(id));
     } catch (err) {

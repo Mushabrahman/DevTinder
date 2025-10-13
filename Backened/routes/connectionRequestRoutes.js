@@ -61,7 +61,7 @@ router.post('/api/request/review/:status/:toUserId', authUser, async (req, res) 
         const status = req.params.status;
         const requestId = req.params.toUserId
 
-       
+
 
         const allowedStatus = ["accepted", "rejected"];
 
@@ -69,13 +69,13 @@ router.post('/api/request/review/:status/:toUserId', authUser, async (req, res) 
             throw new Error(`invalid type status ${status}`)
         }
 
-        const connectionRequest =await ConnectionRequest.findOne({
+        const connectionRequest = await ConnectionRequest.findOne({
             status: "interested",
             toUserId: LogedinUser._id,
             fromUserId: requestId
         })
 
-   
+
 
         if (!connectionRequest) {
             throw new Error("Connection request not found");
@@ -166,7 +166,7 @@ router.get('/api/connections', authUser, async (req, res) => {
     try {
         const LogedinUser = req.user;
 
-        const connections =await ConnectionRequest.find({
+        const connections = await ConnectionRequest.find({
             status: "accepted",
             toUserId: LogedinUser._id,
         }).populate("fromUserId", ["firstName", "lastName", "gender", "about", "skills", "age", "profilePhoto"]);

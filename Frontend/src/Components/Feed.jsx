@@ -11,6 +11,7 @@ const Feed = () => {
   const feed = useSelector((store) => store.feed);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+    const [requestError, setRequestError] = useState(null);
 
   const getFeed = async () => {
     if (feed && feed.length > 0) return;
@@ -45,7 +46,7 @@ const Feed = () => {
       dispatch(addConnectionRequest(res.data.saveData));
       dispatch(removeFeed(user._id));
     } catch (err) {
-      console.error("Error sending request:", err);
+     setRequestError(err);
     }
   };
 
@@ -54,9 +55,9 @@ const Feed = () => {
     const velocityX = info.velocity.x;
 
     if (offsetX > 100 || velocityX > 500) {
-      sendRequest("interested", user); // 👉 Swipe right
+      sendRequest("interested", user); 
     } else if (offsetX < -100 || velocityX < -500) {
-      sendRequest("ignore", user); // 👉 Swipe left
+      sendRequest("ignore", user); 
     }
   };
 
@@ -72,6 +73,14 @@ const Feed = () => {
     return (
       <div className="mt-16 flex justify-center h-full text-lg text-white">
         Error loading feed.
+      </div>
+    );
+  }
+
+  if (requestError) {
+    return (
+      <div className="mt-16 flex justify-center h-full text-lg text-white">
+        Error in sending the error, please reload the page.
       </div>
     );
   }
@@ -99,7 +108,7 @@ const Feed = () => {
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.8 }}
           whileDrag={{ rotate: info => info.offset.x / 20 }}
-          transition={{ duration: 0.9 }}
+          transition={{ duration: 0.3 }}
         >
           <UserCard user={user} />
         </motion.div>

@@ -1,25 +1,55 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addConnections } from "../utils/connectionsSlice";
+import { Link } from "react-router-dom";
+import { createSocketConnection } from "../utils/socket";
 
 export default function ConnectionRequest() {
   const [error, setError] = useState(null);
+  const [onlineUsers, setOnlineUsers] = useState([]);
   const dispatch = useDispatch();
   const connections = useSelector((store) => store.connections);
+  const socketRef = useRef(null);
+  const [loading, setLoading] = useState(false);
+
+  const senderUserId = useSelector((s) => s.user?.user?._id);
 
   const connectionsFetch = async () => {
     try {
+      setLoading(true);
       const res = await axios.get("/api/connections", { withCredentials: true });
       dispatch(addConnections(res.data.data));
     } catch (err) {
       setError(err.message);
+    } finally{
+      setLoading(false);
     }
   };
 
   useEffect(() => {
     connectionsFetch();
-  }, []);
+
+    if (!senderUserId) return;
+
+    if (!socketRef.current) {
+      socketRef.current = createSocketConnection();
+    }
+    const socket = socketRef.current;
+
+    socket.emit("userConnected", senderUserId);
+
+    const handleOnlineUpdate = (users) => {
+      setOnlineUsers(users.map(String));
+    };
+
+    socket.on("onlineUserUpdate", handleOnlineUpdate);
+
+    return () => {
+      socket.off("onlineUserUpdate", handleOnlineUpdate);
+    };
+  }, [senderUserId, dispatch]);
+
 
   if (error) {
     return (
@@ -32,7 +62,7 @@ export default function ConnectionRequest() {
   if (connections === null) {
     return (
       <div className="mt-16 flex justify-center h-full text-lg caret-transparent select-none text-white">
-        Something went wrong
+       Loading Connections...
       </div>
     );
   }
@@ -51,30 +81,38 @@ export default function ConnectionRequest() {
         Connections
       </h1>
       {connections.map((ele) => {
-        const { firstName, lastName, age, gender, skills, about, id,profilePhoto } = ele.fromUserId;
+        const { firstName, lastName, age, gender, skills, about, _id: id, profilePhoto } = ele.fromUserId;
+
+        const isUserOnline = onlineUsers.includes(id);
+
         return (
           <div
             key={id}
             className="
-              w-full 
-              sm:w-11/12 
-              md:w-3/4 
-              lg:w-[45%] 
-              rounded-2xl 
-             card 
-             bg-neutral 
-             text-neutral-content
-              flex 
-              flex-col sm:flex-row 
-              items-center 
-              sm:items-start 
-              gap-4 sm:gap-6 
-              px-4 sm:px-6 
-              py-4 
-              caret-transparent 
-              select-none
-            "
+                            w-full 
+                            sm:w-11/12 
+                            md:w-3/4 
+                            lg:w-[45%] 
+                            rounded-2xl 
+                            card 
+                            bg-neutral 
+                            text-neutral-content
+                            flex 
+                            flex-col sm:flex-row 
+                            items-center 
+                            sm:items-start 
+                            gap-4 sm:gap-6 
+                            px-4 sm:px-6 
+                            py-4 
+                            caret-transparent 
+                            select-none
+                            relative"
           >
+            <div className={`
+                            absolute top-2 right-2 sm:top-4 sm:right-4 h-3 w-3 rounded-full 
+                            ${isUserOnline ? 'bg-green-500 animate-pulse' : 'bg-gray-500'}
+                        `}></div>
+
             <div className="flex-shrink-0">
               <img
                 alt={firstName}
@@ -116,6 +154,16 @@ export default function ConnectionRequest() {
                   );
                 })()}
             </div>
+            <Link
+              to={`/chat/${id}`}
+              state={{
+                profilePhoto: profilePhoto,
+                firstName: firstName
+              }}
+              className="flex justify-center items-center py-2 px-4 rounded-xl bg-pink-500 cursor-pointer hover:bg-pink-600"
+            >
+              Chat
+            </Link>
           </div>
         );
       })}

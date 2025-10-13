@@ -29,7 +29,8 @@ function Navbar() {
       <div className="flex-1">
         <Link
           to="/"
-          className="btn btn-ghost text-lg sm:text-xl md:text-2xl font-bold"
+          className="mx-4 text-lg sm:text-xl md:text-2xl font-bold cursor-pointer"
+          style={{ position: "relative", zIndex: 1000 }}
         >
           DevTinder
         </Link>

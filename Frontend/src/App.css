@@ -6,3 +6,14 @@
     margin-bottom: 70px; /* same as mt-20 in Tailwind */
   }
 }
+
+.hide-scrollbar {
+  overflow-y: auto;            /* or scroll, depending on your container logic */
+  -ms-overflow-style: none;    /* IE & Edge */
+  scrollbar-width: none;       /* Firefox */
+}
+
+/* For WebKit browsers (Chrome, Safari, etc.) */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}

@@ -38,10 +38,8 @@ function EditProfile({ user }) {
     return (
         <>
             <div className='flex justify-center mt-12 mb-30 gap-10'>
-
                 <div className="card bg-neutral text-neutral-content w-96 shadow-sm">
                     <h1 className='text-center pt-8 from-neutral-200 font-semibold text-xl'>Edit Profile!</h1>
-
                     <figure className="flex-col  pt-5">
                         <label className='flex items-start font-semibold'>
                             First Name

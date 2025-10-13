@@ -1,5 +1,3 @@
-import { useState } from 'react'
-
 function Footer() {
     return (
         <footer className="fixed bottom-0 left-0 w-full bg-neutral text-neutral-content p-4 shadow-md px-12 z-0">
