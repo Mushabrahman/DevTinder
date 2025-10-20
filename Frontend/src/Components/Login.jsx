@@ -22,7 +22,7 @@ function Login() {
         password
       })
       dispatch(addUser(fetch.data));
-      navigate('/feed')
+      navigate('/profile')
     }
     catch (err) {
       setError(err?.response?.data?.error || "Something went wrong")
@@ -64,7 +64,7 @@ function Login() {
                   value={firstName}
                   name="firstName"
                   minLength="2"
-                  className="text-black font-semibold flex-1 p-2 rounded-md outline-none"
+                  className="text-black bg-white font-semibold flex-1 p-2 rounded-md outline-none"
                   onChange={(e) => setFirstName(e.target.value)}
                 />
               </label>
@@ -78,7 +78,7 @@ function Login() {
                   placeholder="Last Name"
                   value={lastName}
                   name="lastName"
-                  className="text-black font-semibold flex-1 p-2 rounded-md outline-none"
+                  className="text-black font-semibold bg-white flex-1 p-2 rounded-md outline-none"
                   onChange={(e) => setLastName(e.target.value)}
                 />
               </label>
@@ -95,7 +95,7 @@ function Login() {
               name="email"
               value={emailId}
               required
-              className="text-black font-semibold flex-1 p-2 rounded-md outline-none"
+              className="text-black font-semibold bg-white flex-1 p-2 rounded-md outline-none"
               onChange={(e) => setEmail(e.target.value)}
             />
           </label>
@@ -111,7 +111,7 @@ function Login() {
               value={password}
               name="password"
               minLength="8"
-              className="text-black font-semibold flex-1 p-2 rounded-md outline-none"
+              className="text-black font-semibold bg-white flex-1 p-2 rounded-md outline-none"
               onChange={(e) => setPassword(e.target.value)}
             />
           </label>

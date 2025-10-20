@@ -3,7 +3,8 @@ const mongoose = require("mongoose")
 const connectionSchema = new mongoose.Schema({
     toUserId : {
         type: mongoose.Schema.Types.ObjectId,
-           require: true
+           require: true,
+           ref: "User"
     },
     fromUserId :{
          type: mongoose.Schema.Types.ObjectId,
@@ -18,6 +19,6 @@ const connectionSchema = new mongoose.Schema({
           message: `{VALUE} is incorrect data type`,
         }
         }
-},{timeStamp: true})
+},{timestamps: true})
 
 module.exports = mongoose.model("ConnectionRequest",connectionSchema)

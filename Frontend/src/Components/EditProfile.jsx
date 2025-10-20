@@ -1,267 +1,177 @@
-import { useState } from 'react'
-import UserCard from './userCard'
-import { useDispatch } from 'react-redux'
-import { addUser } from '../utils/userSlice'
-import axios from 'axios'
-
+import { useState, useRef } from "react";
+import UserCard from "./userCard";
+import { useDispatch } from "react-redux";
+import { addUser } from "../utils/userSlice";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 function EditProfile({ user }) {
-
-
-    const [firstName, setFirstName] = useState(user?.user?.firstName || "")
-    const [lastName, setLastName] = useState(user?.user?.lastName || "")
-    const [about, setAbout] = useState(user?.user?.about || "")
-    const [skills, setSkills] = useState(user?.user?.skills || "")
-    const [gender, setGender] = useState(user?.user?.gender || "")
-    const [age, setAge] = useState(user?.user?.age || "")
-    const [error, setError] = useState(null);
-    const [profilePhoto, setprofilePhoto] = useState(user?.user?.profilePhoto || "");
+    const [firstName, setFirstName] = useState(user?.user?.firstName || "Guest");
+    const [lastName, setLastName] = useState(user?.user?.lastName || "");
+    const [about, setAbout] = useState(user?.user?.about || "");
+    const [skills, setSkills] = useState(user?.user?.skills || "");
+    const [gender, setGender] = useState(user?.user?.gender || "male");
+    const [age, setAge] = useState(user?.user?.age || "");
+    const [profilePhoto, setProfilePhoto] = useState(user?.user?.profilePhoto || "");
+    const [selectedFile, setSelectedFile] = useState(null);
 
     const dispatch = useDispatch();
+    const fileInputRef = useRef(null);
+
+    const handleIconClick = () => {
+        fileInputRef.current?.click();
+    };
+
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setSelectedFile(file);
+            setProfilePhoto(URL.createObjectURL(file)); // preview
+        }
+    };
 
     const editProfileFetch = async () => {
         try {
-            const res = await axios.patch("/api/editUser", { firstName, lastName, about, skills, gender, age, profilePhoto }, {
-                withCredentials: true
+            const formData = new FormData();
+            formData.append("firstName", firstName);
+            formData.append("lastName", lastName);
+            formData.append("about", about);
+            formData.append("skills", skills);
+            formData.append("gender", gender);
+            formData.append("age", age);
+
+            if (selectedFile) {
+                formData.append("profilePhoto", selectedFile);
+            }
+
+            const res = await axios.patch("/api/editUser", formData, {
+                withCredentials: true,
+                headers: { "Content-Type": "multipart/form-data" },
             });
+
             dispatch(addUser(res.data));
+            toast.success("Profile updated successfully");
         } catch (err) {
-            setError(err.message);
+            toast.error("Error updating profile: " + err.message);
         }
-    }
-
-    if (error) {
-        return <div className="mt-16 flex justify-center h-full text-lg">Error loading Edit Profile</div>;
-    }
-
+    };
 
     return (
-        <>
-            <div className='flex justify-center mt-12 mb-30 gap-10'>
-                <div className="card bg-neutral text-neutral-content w-96 shadow-sm">
-                    <h1 className='text-center pt-8 from-neutral-200 font-semibold text-xl'>Edit Profile!</h1>
-                    <figure className="flex-col  pt-5">
-                        <label className='flex items-start font-semibold'>
-                            First Name
-                        </label>
-                        <label className="input validator mt-2">
-                            <svg className="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                                <g
-                                    strokeLinejoin="round"
-                                    strokeLinecap="round"
-                                    strokeWidth="2.5"
-                                    fill="none"
-                                    stroke="currentColor"
-                                >
-                                    <path
-                                        d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"
-                                    ></path>
-                                    <circle cx="16.5" cy="7.5" r=".5" fill="currentColor"></circle>
-                                </g>
-                            </svg>
-                            <input
-                                type="text"
-                                placeholder="Firsft Name"
-                                value={firstName}
-                                name="firstName"
-                                className='text-black font-semibold'
-                                onChange={(e) => setFirstName(e.target.value)}
-                            />
-                        </label>
-                    </figure>
+        <div className="flex flex-col-reverse md:flex-row justify-center items-center md:items-start mx-auto mt-12 mb-30 gap-10 -z-10">
+            <div className="card bg-neutral text-neutral-content flex-col items-center w-[310px] sm:w-96 shadow-sm">
+                <h1 className="text-center pt-8 font-semibold text-xl">Edit Profile!</h1>
 
-                    <figure className="flex-col  pt-5">
-                        <label className='flex items-start font-semibold'>
-                            Last Name
-                        </label>
-                        <label className="input validator mt-2">
-                            <svg className="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                                <g
-                                    strokeLinejoin="round"
-                                    strokeLinecap="round"
-                                    strokeWidth="2.5"
-                                    fill="none"
-                                    stroke="currentColor"
-                                >
-                                    <path
-                                        d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"
-                                    ></path>
-                                    <circle cx="16.5" cy="7.5" r=".5" fill="currentColor"></circle>
-                                </g>
-                            </svg>
-                            <input
-                                type="text"
-                                placeholder="Last Name"
-                                value={lastName}
-                                name="lastName"
-                                className='text-black font-semibold'
-                                onChange={(e) => setLastName(e.target.value)}
-                            />
-                        </label>
-                    </figure>
+                <div className="flex-col pt-5 w-[260px] sm:w-[273px]">
+                    <label className="font-semibold caret-transparent">First Name</label>
+                    <input
+                        type="text"
+                        placeholder="First Name"
+                        value={firstName}
+                        className="input mt-2 text-black font-semibold pl-2"
+                        onChange={(e) => setFirstName(e.target.value)}
+                    />
+                </div>
 
-                    <figure className="flex-col  pt-5">
-                        <label className='flex items-start font-semibold'>
-                            About
-                        </label>
-                        <label className="input validator mt-2">
-                            <svg className="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                                <g
-                                    strokeLinejoin="round"
-                                    strokeLinecap="round"
-                                    strokeWidth="2.5"
-                                    fill="none"
-                                    stroke="currentColor"
-                                >
-                                    <path
-                                        d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"
-                                    ></path>
-                                    <circle cx="16.5" cy="7.5" r=".5" fill="currentColor"></circle>
-                                </g>
-                            </svg>
-                            <input
-                                type="text"
-                                placeholder="About"
-                                value={about}
-                                name="about"
-                                className='text-black font-semibold'
-                                onChange={(e) => setAbout(e.target.value)}
-                            />
-                        </label>
-                    </figure>
+                <div className="flex-col pt-5 w-[260px] sm:w-[273px]">
+                    <label className="font-semibold caret-transparent">Last Name</label>
+                    <input
+                        type="text"
+                        placeholder="Last Name"
+                        value={lastName}
+                        className="input mt-2 text-black font-semibold pl-2"
+                        onChange={(e) => setLastName(e.target.value)}
+                    />
+                </div>
 
-                    <figure className="flex-col  pt-5">
-                        <label className='flex items-start font-semibold'>
-                            Skills
-                        </label>
-                        <label className="input validator mt-2">
-                            <svg className="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                                <g
-                                    strokeLinejoin="round"
-                                    strokeLinecap="round"
-                                    strokeWidth="2.5"
-                                    fill="none"
-                                    stroke="currentColor"
-                                >
-                                    <path
-                                        d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"
-                                    ></path>
-                                    <circle cx="16.5" cy="7.5" r=".5" fill="currentColor"></circle>
-                                </g>
-                            </svg>
-                            <input
-                                type="text"
-                                placeholder="skills"
-                                value={skills}
-                                name="skills"
-                                className='text-black font-semibold'
-                                onChange={(e) => setSkills(e.target.value)}
-                            />
-                        </label>
-                    </figure>
+                <div className="flex-col pt-5 w-[260px] sm:w-[273px] relative">
+                    <label className="font-semibold caret-transparent  ">About</label>
+                    <span className="absolute right-0 top-0 text-sm text-gray-500 mt-5"> {about.length}/50 </span>
+                    <input
+                        type="text"
+                        placeholder="About"
+                        value={about}
+                        maxLength={50}
+                        className="input mt-2 text-black font-semibold pl-2"
+                        onChange={(e) => setAbout(e.target.value)}
+                    />
+                </div>
 
-                    <figure className="flex-col  pt-5">
-                        <label className='flex items-start font-semibold'>
-                            Gender
-                        </label>
-                        <label className="input validator mt-2">
-                            <svg className="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                                <g
-                                    strokeLinejoin="round"
-                                    strokeLinecap="round"
-                                    strokeWidth="2.5"
-                                    fill="none"
-                                    stroke="currentColor"
-                                >
-                                    <path
-                                        d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"
-                                    ></path>
-                                    <circle cx="16.5" cy="7.5" r=".5" fill="currentColor"></circle>
-                                </g>
-                            </svg>
-                            <input
-                                type="text"
-                                placeholder="gender"
-                                value={gender}
-                                name="password"
-                                className='text-black font-semibold'
-                                onChange={(e) => setGender(e.target.value)}
-                            />
-                        </label>
-                    </figure>
+                <div className="flex-col pt-5 w-[260px] sm:w-[273px]">
+                    <label className="font-semibold caret-transparent">Gender</label>
+                    <select
+                        value={gender}
+                        className="input mt-2 text-black font-semibold pl-2 cursor-pointer"
+                        onChange={(e) => setGender(e.target.value)}
+                    >
+                        <option value="male cursor-pointer">male</option>
+                        <option value="female cursor-pointer">female</option>
+                    </select>
+                </div>
 
-                    <figure className="flex-col  pt-5">
-                        <label className='flex items-start font-semibold'>
-                            Age
-                        </label>
-                        <label className="input validator mt-2">
-                            <svg className="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                                <g
-                                    strokeLinejoin="round"
-                                    strokeLinecap="round"
-                                    strokeWidth="2.5"
-                                    fill="none"
-                                    stroke="currentColor"
-                                >
-                                    <path
-                                        d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"
-                                    ></path>
-                                    <circle cx="16.5" cy="7.5" r=".5" fill="currentColor"></circle>
-                                </g>
-                            </svg>
-                            <input
-                                type="number"
-                                maxLength={2}
-                                placeholder="age"
-                                value={age}
-                                name="age"
-                                className='text-black font-semibold'
-                                onChange={(e) => setAge(e.target.value)}
-                            />
-                        </label>
-                    </figure>
+                <div className="flex-col pt-5 w-[260px] sm:w-[273px]">
+                    <label className="font-semibold caret-transparent">Age</label>
+                    <input
+                        type="number"
+                        placeholder="Age"
+                        value={age}
+                        maxLength={2}
+                        className="input mt-2 text-black font-semibold pl-2"
+                        onChange={(e) => setAge(e.target.value)}
+                    />
+                </div>
 
-                    <figure className="flex-col  pt-5">
-                        <label className='flex items-start font-semibold'>
-                            Profile Picture
-                        </label>
-                        <label className="input validator mt-2">
-                            <svg className="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                                <g
-                                    strokeLinejoin="round"
-                                    strokeLinecap="round"
-                                    strokeWidth="2.5"
-                                    fill="none"
-                                    stroke="currentColor"
-                                >
-                                    <path
-                                        d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"
-                                    ></path>
-                                    <circle cx="16.5" cy="7.5" r=".5" fill="currentColor"></circle>
-                                </g>
-                            </svg>
-                            <input
-                                type="text"
-                                placeholder="Enter Image Url"
-                                value={profilePhoto}
-                                name="profile pic"
-                                className='text-black font-semibold'
-                                onChange={(e) => setprofilePhoto(e.target.value)}
-                            />
-                        </label>
-                    </figure>
+                <div className="flex-col pt-5 w-[260px] sm:w-[273px]">
+                    <label className="font-semibold caret-transparent">Skills</label>
+                    <input
+                        type="text"
+                        placeholder="Skills"
+                        value={skills}
+                        className="input mt-2 text-black font-semibold pl-2"
+                        onChange={(e) => setSkills(e.target.value)}
+                    />
+                </div>
 
-                    <div className="card-body items-center text-center">
-                        <div className="card-actions">
-                            <button type="button" className="btn btn-primary" onClick={editProfileFetch}>Save Profile</button>
+                <div className="flex-col pt-5 items-center text-center caret-transparent">
+                    <label className="font-semibold caret-transparent">Profile Picture</label>
+
+                    <div className="mt-2 relative w-full flex justify-center cursor-pointer">
+                        <input
+                            type="file"
+                            accept="image/*"
+                            ref={fileInputRef}
+                            className="hidden"
+                            onChange={handleFileChange}
+                        />
+
+                        <div
+                            className="w-32 h-32 rounded-full border-2 border-dashed border-gray-400 flex items-center justify-center cursor-pointer bg-gray-100"
+                            onClick={handleIconClick}
+                        >
+                            {profilePhoto ? (
+                                <img
+                                    src={profilePhoto}
+                                    alt="Profile"
+                                    className="w-full h-full object-cover rounded-full"
+                                />
+                            ) : (
+                                <span className="text-gray-500 text-3xl caret-transparent">+</span>
+                            )}
                         </div>
                     </div>
                 </div>
 
-                <UserCard user={{ firstName, lastName, age, about, skills, gender, profilePhoto }} />
+                <div className="card-body items-center text-center">
+                    <button type="button" className="btn btn-primary" onClick={editProfileFetch}>
+                        Save Profile
+                    </button>
+                </div>
             </div>
-        </>
-    )
+
+            <UserCard
+                user={{ firstName, lastName, age, about, skills, gender, profilePhoto }}
+            />
+        </div>
+    );
 }
 
-export default EditProfile
+export default EditProfile;

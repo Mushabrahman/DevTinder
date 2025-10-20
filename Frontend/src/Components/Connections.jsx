@@ -81,7 +81,7 @@ export default function ConnectionRequest() {
         Connections
       </h1>
       {connections.map((ele) => {
-        const { firstName, lastName, age, gender, skills, about, _id: id, profilePhoto } = ele.fromUserId;
+        const { firstName, lastName, age, gender, skills, about, _id: id, profilePhoto } = ele;
 
         const isUserOnline = onlineUsers.includes(id);
 
@@ -117,29 +117,25 @@ export default function ConnectionRequest() {
               <img
                 alt={firstName}
                 className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover cursor-default"
-                src={profilePhoto}
+                src={`http://localhost:8000${profilePhoto}`}
               />
             </div>
             <div className="flex-1 flex flex-col justify-center gap-1 text-sm sm:text-base caret-transparent select-none">
-              <h1 className="text-lg sm:text-xl font-semibold caret-transparent select-none">
+              <h1 className="text-lg sm:text-xl font-semibold caret-transparent select-none mb-2">
                 {firstName + " " + lastName}
               </h1>
               {age && gender && (
-                <h2 className="text-sm sm:text-base caret-transparent select-none">
+                <h2 className="text-sm sm:text-base w-max py-1 px-3 rounded-2xl  font-light caret-transparent select-none bg-gray-700 mb-1">
                   {age + ", " + gender}
                 </h2>
               )}
 
               {about &&
-                (() => {
-                  const displayText =
-                    about.length > 40 ? about.slice(0, 40) + "..." : about;
-                  return (
+                (
                     <h2 className="py-1 text-sm sm:text-base caret-transparent select-none">
-                      {displayText}
+                      {about}
                     </h2>
-                  );
-                })()}
+                )}
 
               {skills &&
                 (() => {

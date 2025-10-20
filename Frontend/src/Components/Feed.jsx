@@ -11,7 +11,7 @@ const Feed = () => {
   const feed = useSelector((store) => store.feed);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-    const [requestError, setRequestError] = useState(null);
+  const [requestError, setRequestError] = useState(null);
 
   const getFeed = async () => {
     if (feed && feed.length > 0) return;
@@ -20,6 +20,7 @@ const Feed = () => {
     try {
       const res = await axios.get("/api/feed", { withCredentials: true });
       const data = res?.data?.data;
+      console.log(data);
       if (data && Array.isArray(data)) {
         dispatch(addFeed(data));
       } else {
@@ -96,8 +97,8 @@ const Feed = () => {
   const user = feed[0];
 
   return (
-    <div className="flex justify-center px-4 mt-6 mb-32 sm:mt-10 sm:mb-40 md:mt-10">
-      <div className="w-full max-w-md relative h-[600px]">
+    <div className="flex justify-center items-center px-4 mt-8 mb-20 md:mb-24 sm:mt-10">
+      <div className="w-full max-w-md relative h-[570px] sm:h-[530px]">
         <motion.div
           key={user._id}
           className="absolute w-full"

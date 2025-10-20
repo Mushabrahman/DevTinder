@@ -2,6 +2,7 @@ const express = require('express');
 const authUser = require('../middlewares/utils')
 const ConnectionRequest = require("../modelSchema/connectionRequestModel");
 const User = require("../modelSchema/useModel");
+const { sendEmail } = require("../utils/sendEmail");
 
 const router = express.Router();
 
@@ -28,9 +29,13 @@ router.post('/api/request/send/:status/:toUserId', authUser, async (req, res) =>
             throw new Error(`invalid type status ${status}`);
         }
 
-        if (!await User.findById(toUserId)) {
+        const toUser = await User.findById(toUserId);
+
+        if (!toUser) {
             throw new Error(`User not found`);
         }
+
+        const fromUser = await User.findById(fromUserId);
 
         const existingConnectionRequest = await ConnectionRequest.findOne({
             $or: [
@@ -44,6 +49,14 @@ router.post('/api/request/send/:status/:toUserId', authUser, async (req, res) =>
         }
 
         const saveData = await userRequestField.save();
+
+         await sendEmail({
+            toAddress: "mushabrahman02@gmail.com",
+            fromAddress: "mushabrahman@webtinder.in",
+            subject: `${fromUser.firstName} sends a freind request`,
+            bodyHtml: `<h1>${fromUser.firstName} wants to be a freind of ${toUser.firstName}`,
+            bodyText: `${fromUser.firstName} wants to be a freind of ${toUser.firstName}`
+        })
 
         res.status(200).json({
             message: "Connection Request successfully",
@@ -74,8 +87,6 @@ router.post('/api/request/review/:status/:toUserId', authUser, async (req, res) 
             toUserId: LogedinUser._id,
             fromUserId: requestId
         })
-
-
 
         if (!connectionRequest) {
             throw new Error("Connection request not found");
@@ -155,7 +166,6 @@ router.get('/api/feed', authUser, async (req, res) => {
         res.status(200).json({
             data: allFeed
         })
-
     }
     catch (Error) {
         res.status(400).json({ message: Error.message });
@@ -163,29 +173,38 @@ router.get('/api/feed', authUser, async (req, res) => {
 })
 
 router.get('/api/connections', authUser, async (req, res) => {
-    try {
-        const LogedinUser = req.user;
+  const loggedInId = req.user._id;
 
-        const connections = await ConnectionRequest.find({
-            status: "accepted",
-            toUserId: LogedinUser._id,
-        }).populate("fromUserId", ["firstName", "lastName", "gender", "about", "skills", "age", "profilePhoto"]);
+  const connections = await ConnectionRequest.find({
+    status: "accepted",
+    $or: [
+      { toUserId: loggedInId },
+      { fromUserId: loggedInId }
+    ]
+  })
+  .populate("fromUserId", ["firstName","lastName","gender","about","skills","age","profilePhoto"])
+  .populate("toUserId",   ["firstName","lastName","gender","about","skills","age","profilePhoto"]);
 
-        if (!connections) {
-            throw new Error("Connections request not found");
-        }
+  const formatted = connections
+    .map(conn => {
+      const from = conn.fromUserId;
+      const to   = conn.toUserId;
+      if (!from || !to) {
+        // skip this connection because one side missing
+        return null;
+      }
+      if (String(from._id) === String(loggedInId)) {
+        return to;
+      }
+      return from;
+    })
+    .filter(userObj => userObj && userObj._id);  // only keep valid user objects
 
-        res.status(200).json({
-            message: `Connections fetched successfully`,
-            data: connections
-        });
+  res.status(200).json({
+    message: "Connections fetched successfully",
+    data: formatted
+  });
+});
 
-
-    } catch (err) {
-        res.status(400).json({
-            message: Error.message
-        })
-    }
-})
 
 module.exports = router

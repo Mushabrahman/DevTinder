@@ -15,6 +15,9 @@ function Chat() {
   const isFetchingRef = useRef(false);
   const [modalImage, setModalImage] = useState(null);
   const [attachmentName, setAttachmentName] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
+  const [otherUserTyping, setOtherUserTyping] = useState(false);
+
 
 
   const messagesEndRef = useRef(null);
@@ -40,6 +43,24 @@ function Chat() {
     };
   };
 
+  const handleTyping = (e) => {
+    setNewMessage(e.target.value);
+
+    if (!socketRef.current) return;
+    if (!isTyping) {
+      setIsTyping(true);
+      socketRef.current.emit("typing", { targetUserId, senderUserId });
+    }
+
+    // stop typing after user stops input for 1s
+    clearTimeout(handleTyping.timeout);
+    handleTyping.timeout = setTimeout(() => {
+      setIsTyping(false);
+      socketRef.current.emit("stopTyping", { targetUserId, senderUserId });
+    }, 1000);
+  };
+
+
   // Setup socket
   useEffect(() => {
     if (!senderUserId || !targetUserId) return;
@@ -59,9 +80,22 @@ function Chat() {
       isFetchingRef.current = false;
     });
 
+    socket.on("userTyping", (userId) => {
+      if (String(userId) === String(targetUserId)) setOtherUserTyping(true);
+    });
+
+    socket.on("userStopTyping", (userId) => {
+      if (String(userId) === String(targetUserId)) setOtherUserTyping(false);
+    });
+
+
     return () => {
       socket.off("messageReceived");
       socket.off("onlineUserUpdate");
+      socket.off("messageReceived");
+      socket.off("onlineUserUpdate");
+      socket.off("userTyping");
+      socket.off("userStopTyping");
     };
   }, [targetUserId, senderUserId]);
 
@@ -95,7 +129,7 @@ function Chat() {
             attachments: m.attachments || [],
           }));
 
-          if(messages.length<=0){
+          if (messages.length <= 0) {
             isFetchingRef.current = false;
           }
 
@@ -174,45 +208,45 @@ function Chat() {
     setNewMessage("");
   };
 
-const formatMessageTime = (iso) => {
-  const d = new Date(iso);
-  const now = new Date();
+  const formatMessageTime = (iso) => {
+    const d = new Date(iso);
+    const now = new Date();
 
-  const pad2 = (n) => n.toString().padStart(2, "0");
+    const pad2 = (n) => n.toString().padStart(2, "0");
 
-  const formatDate = (date) =>
-    `${pad2(date.getDate())}-${pad2(date.getMonth() + 1)}-${date.getFullYear()}`;
+    const formatDate = (date) =>
+      `${pad2(date.getDate())}-${pad2(date.getMonth() + 1)}-${date.getFullYear()}`;
 
-  const formatTime = (date) => 
-    date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    const formatTime = (date) =>
+      date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 
-  const isSameDay = (d1, d2) =>
-    d1.getFullYear() === d2.getFullYear() &&
-    d1.getMonth() === d2.getMonth() &&
-    d1.getDate() === d2.getDate();
+    const isSameDay = (d1, d2) =>
+      d1.getFullYear() === d2.getFullYear() &&
+      d1.getMonth() === d2.getMonth() &&
+      d1.getDate() === d2.getDate();
 
-  const isYesterday = (date) => {
-    const y = new Date(now);
-    y.setDate(y.getDate() - 1);
-    return isSameDay(date, y);
+    const isYesterday = (date) => {
+      const y = new Date(now);
+      y.setDate(y.getDate() - 1);
+      return isSameDay(date, y);
+    };
+
+    if (isSameDay(d, now)) {
+      // Today → show only time
+      return formatTime(d);
+    } else if (isYesterday(d)) {
+      // Yesterday → show “Yesterday” (you can append time if desired)
+      const timePart = formatTime(d);
+      return `Yesterday ${timePart}`;
+    } else {
+      // Older → show full date + time
+      return `${formatDate(d)} ${formatTime(d)}`;
+    }
   };
-
-  if (isSameDay(d, now)) {
-    // Today → show only time
-    return formatTime(d);
-  } else if (isYesterday(d)) {
-    // Yesterday → show “Yesterday” (you can append time if desired)
-    const timePart = formatTime(d);
-    return `Yesterday ${timePart}`;
-  } else {
-    // Older → show full date + time
-    return `${formatDate(d)} ${formatTime(d)}`;
-  }
-};
 
 
   return (
-    <div className="card h-64 md:h-72 w-[90%] md:w-2/3 lg:w-1/2 mt-10 mx-auto border border-gray-600 flex flex-col bg-black text-white rounded-lg shadow-lg">
+    <div className="card  h-[410px] sm:h-96 w-[90%] md:w-2/3 mt-10 mx-auto border border-gray-600 flex flex-col bg-black text-white rounded-lg shadow-lg">
       {/* Header */}
       <div className="p-4 border-b border-gray-600 flex justify-between items-center">
         <div className="flex items-center gap-3">
@@ -289,6 +323,9 @@ const formatMessageTime = (iso) => {
             </div>
           </div>
         ))}
+        {otherUserTyping && (
+  <div className="text-sm text-gray-400 px-4 pb-1 italic">Typing...</div>
+)}
         <div ref={messagesEndRef} />
       </div>
 
@@ -301,7 +338,7 @@ const formatMessageTime = (iso) => {
         <input
           className="flex-1 border border-gray-600 bg-gray-900 text-white rounded-2xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
+          onChange={handleTyping}
           onKeyDown={(e) => e.key === "Enter" && handleSend()}
           placeholder={
             attachmentName

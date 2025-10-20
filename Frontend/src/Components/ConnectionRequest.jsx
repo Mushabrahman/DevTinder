@@ -76,22 +76,22 @@ export default function ConnectionRequest() {
                 return (
                     <div
                         key={_id}
-                        className="w-full sm:w-4/5 lg:w-1/2 rounded-2xl card bg-neutral text-neutral-content flex flex-col sm:flex-row items-center sm:items-start p-4 sm:p-5 gap-4 sm:gap-6 shadow-md"
+                        className="w-full sm:w-4/5 md:w-[65%] rounded-2xl card bg-neutral text-neutral-content flex flex-col sm:flex-row items-center sm:items-start p-4 sm:p-5 gap-4 sm:gap-6 shadow-md"
                     >
                         <div className="flex-shrink-0">
                             <img
                                 alt={firstName}
                                 className="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover"
-                                src={profilePhoto}
+                                src={`http://localhost:8000${profilePhoto}`}
                             />
                         </div>
 
-                        <div className="flex-1 text-center sm:text-left font-semibold space-y-1">
-                            <h1 className="text-base sm:text-lg font-semibold">
+                        <div className="flex-1 text-center sm:text-left font-semibold  gap-1 space-y-1 flex flex-col items-center sm:items-start">
+                            <h1 className="text-base sm:text-lg font-semibold mb-2">
                                 {firstName + " " + lastName}
                             </h1>
                             {age && gender && (
-                                <h2 className="text-sm sm:text-base">{age + ", " + gender}</h2>
+                                <h2 className="text-sm sm:text-base w-max py-1 px-3 rounded-2xl  font-light caret-transparent select-none bg-gray-700 mb-2 ">{age + ", " + gender}</h2>
                             )}
                             {about && <h2 className="text-sm sm:text-base">{about}</h2>}
                         </div>

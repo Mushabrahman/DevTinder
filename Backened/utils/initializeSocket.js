@@ -13,41 +13,41 @@ const initializeSocket = (server) => {
   });
 
   const broadcastOnlineStatus = () => {
-        io.emit("onlineUserUpdate", Array.from(onlineUsers));
-    };
+    io.emit("onlineUserUpdate", Array.from(onlineUsers));
+  };
 
 
   io.on("connection", (socket) => {
     console.log("Socket connected:", socket.id);
 
-     let currentUserId = null;
+    let currentUserId = null;
 
-        socket.on("userConnected", (userId) => {
-            if (userId && mongoose.Types.ObjectId.isValid(userId)) {
-                currentUserId = userId;
-                
-                if (!onlineUsers.has(currentUserId)) {
-                    onlineUsers.add(currentUserId);
-                    console.log(`User ${currentUserId} is now ONLINE. Total: ${onlineUsers.size}`);
-                    
-                    // Broadcast the change to ALL clients
-                    broadcastOnlineStatus();
-                }
-            }
-        });
+    socket.on("userConnected", (userId) => {
+      if (userId && mongoose.Types.ObjectId.isValid(userId)) {
+        currentUserId = userId;
 
-        // 2. Disconnection & Cleanup
-        socket.on("disconnect", () => {
-            if (currentUserId) {
+        if (!onlineUsers.has(currentUserId)) {
+          onlineUsers.add(currentUserId);
+          console.log(`User ${currentUserId} is now ONLINE. Total: ${onlineUsers.size}`);
 
-                if (onlineUsers.has(currentUserId)) {
-                    onlineUsers.delete(currentUserId);
-                    console.log(`User ${currentUserId} is now OFFLINE. Total: ${onlineUsers.size}`);
-                    
-                    broadcastOnlineStatus();
-                }
-            }
-        });
+          // Broadcast the change to ALL clients
+          broadcastOnlineStatus();
+        }
+      }
+    });
+
+    // 2. Disconnection & Cleanup
+    socket.on("disconnect", () => {
+      if (currentUserId) {
+
+        if (onlineUsers.has(currentUserId)) {
+          onlineUsers.delete(currentUserId);
+          console.log(`User ${currentUserId} is now OFFLINE. Total: ${onlineUsers.size}`);
+
+          broadcastOnlineStatus();
+        }
+      }
+    });
 
 
     socket.on("joinChat", ({ targetUserId, senderUserId }) => {
@@ -58,7 +58,7 @@ const initializeSocket = (server) => {
 
     socket.on(
       "sendMessage",
-      async ({ firstName, senderUserId, targetUserId, newMessage, timestamp,attachments }) => {
+      async ({ firstName, senderUserId, targetUserId, newMessage, timestamp, attachments }) => {
         try {
           const room = [senderUserId, targetUserId].sort().join("_");
 
@@ -116,6 +116,15 @@ const initializeSocket = (server) => {
         }
       }
     );
+
+    socket.on("typing", ({ targetUserId, senderUserId }) => {
+      io.to(targetUserId).emit("userTyping", senderUserId);
+    });
+
+    socket.on("stopTyping", ({ targetUserId, senderUserId }) => {
+      io.to(targetUserId).emit("userStopTyping", senderUserId);
+    });
+
 
     // New: when a client marks a message as seen
     socket.on("messageSeen", async ({ chatId, messageId, userId }) => {

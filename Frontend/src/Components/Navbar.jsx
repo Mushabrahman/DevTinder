@@ -26,13 +26,24 @@ function Navbar() {
 
   return (
     <div className="navbar bg-neutral text-neutral-content shadow-sm px-4 sm:px-6">
-      <div className="flex-1">
+         <div className="flex-1 flex flex-row items-center">
         <Link
           to="/"
-          className="mx-4 text-lg sm:text-xl md:text-2xl font-bold cursor-pointer"
+          className="cursor-pointer"
           style={{ position: "relative", zIndex: 1000 }}
         >
-          DevTinder
+          <img
+            src="/assets/webLogo.png"
+            alt="WebTinder Logo"
+            className="w-6 h-6 sm:w-8 sm:h-8"
+          />
+        </Link>
+        <Link
+          to="/"
+          className="mx-4 text-md sm:text-xl md:text-2xl font-bold cursor-pointer"
+          style={{ position: "relative", zIndex: 1000 }}
+        >
+          WebTinder
         </Link>
       </div>
 
@@ -52,7 +63,7 @@ function Navbar() {
               <div className="w-8 sm:w-10 rounded-full">
                 <img
                   alt="Avatar"
-                  src={user?.user?.profilePhoto}
+                  src={`http://localhost:8000${user?.user?.profilePhoto}`}
                 />
               </div>
             </div>
@@ -63,7 +74,7 @@ function Navbar() {
             >
               <li>
                 <Link to="/Profile" className="justify-between text-sm sm:text-base">
-                  Profile <span className="badge">New</span>
+                  Profile 
                 </Link>
               </li>
               <li>
