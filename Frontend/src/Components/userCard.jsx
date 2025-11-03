@@ -2,6 +2,7 @@ import axios from "axios";
 import { useDispatch } from "react-redux";
 import { addConnectionRequest } from "../utils/connectionRequestSlice";
 import { removeFeed } from "../utils/feedSlice";
+import { BASE_URL } from "../config";
 
 function UserCard({ user }) {
   const dispatch = useDispatch();
@@ -24,7 +25,7 @@ function UserCard({ user }) {
 const getProfilePhotoSrc = () => {
   if (user?.profilePhoto?.startsWith("/uploads/")) {
     // Image from backend
-    return `http://localhost:8000${user?.profilePhoto}`;
+    return`${BASE_URL}${user?.profilePhoto}`;
   } else if (user?.profilePhoto) {
     // Full external URL (optional case)
     return user?.profilePhoto;

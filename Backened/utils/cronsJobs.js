@@ -8,7 +8,7 @@ function scheduleReminderEmails() {
 
     try {
       const thresholdDate = new Date();
-      thresholdDate.setDate(thresholdDate.getDate()-1); 
+      thresholdDate.setDate(thresholdDate.getDate() - 1);
 
       const pendingRequests = await ConnectionRequest.find({
         status: "interested",
@@ -16,7 +16,7 @@ function scheduleReminderEmails() {
       });
 
       for (const req of pendingRequests) {
-        
+
         const toUser = await User.findById(req.toUserId);
         const fromUser = await User.findById(req.fromUserId);
 
@@ -25,7 +25,7 @@ function scheduleReminderEmails() {
         }
 
         await sendEmail({
-          toAddress: toUser.emailId,  
+          toAddress: toUser.emailId,
           fromAddress: "mushabrahman@webtinder.in",
           subject: `Reminder: You have a pending connection request from ${fromUser.firstName}`,
           bodyHtml: `<p>Hi ${toUser.firstName},</p>
@@ -35,12 +35,11 @@ function scheduleReminderEmails() {
       }
 
     } catch (err) {
-      console.error("[cron] reminder job error:", err);
     }
 
   }, {
     scheduled: true,
-    timezone: "Asia/Kolkata"  
+    timezone: "Asia/Kolkata"
   });
 }
 

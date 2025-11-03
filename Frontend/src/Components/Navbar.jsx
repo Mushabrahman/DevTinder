@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { removeUser } from '../utils/userSlice';
 import { removeFeed } from '../utils/feedSlice';
+import { BASE_URL } from "../config";
 
 function Navbar() {
   const user = useSelector((store) => store.user);
@@ -63,7 +64,7 @@ function Navbar() {
               <div className="w-8 sm:w-10 rounded-full">
                 <img
                   alt="Avatar"
-                  src={`http://localhost:8000${user?.user?.profilePhoto}`}
+                  src={`${BASE_URL}${user?.user?.profilePhoto}`}
                 />
               </div>
             </div>

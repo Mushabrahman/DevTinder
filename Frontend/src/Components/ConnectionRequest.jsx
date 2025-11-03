@@ -82,7 +82,7 @@ export default function ConnectionRequest() {
                             <img
                                 alt={firstName}
                                 className="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover"
-                                src={`http://localhost:8000${profilePhoto}`}
+                                src={`${BASE_URL}${profilePhoto}`}
                             />
                         </div>
 

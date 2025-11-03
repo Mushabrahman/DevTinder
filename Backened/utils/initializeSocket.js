@@ -5,9 +5,15 @@ const mongoose = require("mongoose");
 const onlineUsers = new Set()
 
 const initializeSocket = (server) => {
+
+  const origin =
+    process.env.NODE_ENV === "production"
+      ? "http://43.204.102.182"
+      : "http://localhost:5173";
+
   const io = Socket(server, {
     cors: {
-      origin: "http://localhost:5173",
+      origin,
       credentials: true,
     },
   });
@@ -18,7 +24,6 @@ const initializeSocket = (server) => {
 
 
   io.on("connection", (socket) => {
-    console.log("Socket connected:", socket.id);
 
     let currentUserId = null;
 
@@ -28,7 +33,6 @@ const initializeSocket = (server) => {
 
         if (!onlineUsers.has(currentUserId)) {
           onlineUsers.add(currentUserId);
-          console.log(`User ${currentUserId} is now ONLINE. Total: ${onlineUsers.size}`);
 
           // Broadcast the change to ALL clients
           broadcastOnlineStatus();
@@ -42,17 +46,13 @@ const initializeSocket = (server) => {
 
         if (onlineUsers.has(currentUserId)) {
           onlineUsers.delete(currentUserId);
-          console.log(`User ${currentUserId} is now OFFLINE. Total: ${onlineUsers.size}`);
-
           broadcastOnlineStatus();
         }
       }
     });
 
-
     socket.on("joinChat", ({ targetUserId, senderUserId }) => {
       const room = [senderUserId, targetUserId].sort().join("_");
-      console.log("Joining room:", room);
       socket.join(room);
     });
 
@@ -112,7 +112,6 @@ const initializeSocket = (server) => {
             },
           });
         } catch (err) {
-          console.error("Error in sendMessage handler:", err);
         }
       }
     );
@@ -153,7 +152,6 @@ const initializeSocket = (server) => {
           });
         }
       } catch (err) {
-        console.error("Error in messageSeen handler:", err);
       }
     });
   });

@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { addConnections } from "../utils/connectionsSlice";
 import { Link } from "react-router-dom";
 import { createSocketConnection } from "../utils/socket";
+import { BASE_URL } from "../config";
 
 export default function ConnectionRequest() {
   const [error, setError] = useState(null);
@@ -117,7 +118,7 @@ export default function ConnectionRequest() {
               <img
                 alt={firstName}
                 className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover cursor-default"
-                src={`http://localhost:8000${profilePhoto}`}
+                src={`${BASE_URL}${profilePhoto}`}
               />
             </div>
             <div className="flex-1 flex flex-col justify-center gap-1 text-sm sm:text-base caret-transparent select-none">

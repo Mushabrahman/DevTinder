@@ -138,7 +138,6 @@ router.patch(
         user: updatedUser,
       });
     } catch (err) {
-      console.error("Error in editUser route:", err);
       return res.status(500).json({ message: "Error updating profile", error: err.message });
     }
   }

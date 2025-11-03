@@ -9,7 +9,7 @@ const paymentRoutes = require("./routes/paymentRoutes");
 const chatsRoutes = require("./routes/chatsRoutes");
 const cookieParser = require('cookie-parser');
 const http = require("http");
-const initializeSocket = require('./utils/initializeSocket')
+const initializeSocket = require('./utils/initializeSocket');
 const { scheduleReminderEmails } = require("./utils/cronsJobs");
 
 app.use(cors());
@@ -30,7 +30,6 @@ initializeSocket(server);
 async function startServer() {
     try {
         await connectDB;
-        console.log("✅ MongoDB connected");
 
         server.listen(process.env.PORT, () => {
             console.log(`🚀 Server running on port ${process.env.PORT}`);

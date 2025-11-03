@@ -3,6 +3,7 @@ import { createSocketConnection } from "../utils/socket";
 import { useParams, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import axios from "axios";
+import { BASE_URL } from "../config";
 
 function Chat() {
   const [messages, setMessages] = useState([]);
@@ -296,15 +297,15 @@ function Chat() {
                       url.match(/\.(jpg|jpeg|png|gif)$/i) ? (
                         <img
                           key={idx}
-                          src={`http://localhost:8000${url}`}
+                          src={`${BASE_URL}${url}`}
                           alt={`attachment ${idx}`}
                           className="max-w-[200px] rounded-lg cursor-pointer"
-                          onClick={() => setModalImage(`http://localhost:8000${url}`)}
+                          onClick={() => setModalImage(`${BASE_URL}${url}`)}
                         />
                       ) : (
                         <a
                           key={idx}
-                          href={`http://localhost:8000${url}`}
+                          href={`${BASE_URL}${url}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-white-300 font-bold underline cursor-pointer"

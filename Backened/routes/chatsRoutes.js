@@ -66,7 +66,6 @@ router.post("/api/chat", authUser, async (req, res) => {
       hasMore: start > 0,
     });
   } catch (err) {
-    console.error("Error in /api/chat:", err);
     return res.status(500).json({ error: "Internal server error" });
   }
 });
@@ -81,7 +80,6 @@ router.post("/api/upload", authUser, upload.single("file"), (req, res) => {
     const fileUrl = `/uploads/${req.file.filename}`;
     return res.json({ url: fileUrl });
   } catch (err) {
-    console.error("Error in upload route:", err);
     return res.status(500).json({ error: "Internal server error" });
   }
 });
