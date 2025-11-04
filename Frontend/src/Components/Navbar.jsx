@@ -34,7 +34,7 @@ function Navbar() {
           style={{ position: "relative", zIndex: 1000 }}
         >
           <img
-            src="/assets/webLogo.png"
+            src="/webLogo.png"
             alt="WebTinder Logo"
             className="w-6 h-6 sm:w-8 sm:h-8"
           />
