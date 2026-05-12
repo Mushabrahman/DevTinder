@@ -35,7 +35,7 @@ const PaymentSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["created", "paid", "failed"],
+      enum: ["created", "paid", "failed","captured"],
       default: "created",
     },
     userId: {
