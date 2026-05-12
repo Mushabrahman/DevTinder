@@ -46,7 +46,7 @@ export default function Premium() {
 
   const verifyPremiumUser = async () => {
     try {
-      const res = await axios("/api/verifyPremiumUser", { withCredentials: true });
+      const res = await axios("/api/premium/verify", { withCredentials: true });
       if (res.data.isPremium) setIsUserPremium(true);
     } catch (err) {
       console.error("Error verifying premium user:", err);
