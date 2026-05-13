@@ -33,7 +33,6 @@ export default function Premium() {
         "Duration is 6 months",
       ],
       button: "Upgrade to Gold",
-      tag: "NEW",
       color: "bg-yellow-400 text-yellow-900",
       badgeColor: "badge-yellow-600",
       buttonColor: "btn-yellow-500",
@@ -47,7 +46,10 @@ export default function Premium() {
   const verifyPremiumUser = async () => {
     try {
       const res = await axios.get("/api/premium/verify", { withCredentials: true });
-      if (res.data.isPremium) setIsUserPremium(true);
+      console.log(res.data.isPremium);
+      if (res.data.isPremium) {
+        setIsUserPremium(true);
+      }
     } catch (err) {
       console.error("Error verifying premium user:", err);
     }
