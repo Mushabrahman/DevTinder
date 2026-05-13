@@ -102,9 +102,6 @@ export default function Premium() {
                 <div className="card-body">
                   <div className="flex items-center justify-between">
                     <h2 className="card-title">{plan.name}</h2>
-                    {plan.tag && (
-                      <div className={`badge ${plan.badgeColor}`}>{plan.tag}</div>
-                    )}
                   </div>
                   <p className="text-2xl font-bold">{plan.price}</p>
                   <p className="text-sm text-gray-700">{plan.per}</p>
