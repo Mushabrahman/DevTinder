@@ -13,6 +13,7 @@ function EditProfile({ user }) {
     const [gender, setGender] = useState(user?.user?.gender || "male");
     const [age, setAge] = useState(user?.user?.age || "");
     const [profilePhoto, setProfilePhoto] = useState(user?.user?.profilePhoto || "");
+    const [membershipType, setMembershipType] = useState(user?.user?.membershipType || "");
     const [selectedFile, setSelectedFile] = useState(null);
 
     const dispatch = useDispatch();
@@ -168,7 +169,7 @@ function EditProfile({ user }) {
             </div>
 
             <UserCard
-                user={{ firstName, lastName, age, about, skills, gender, profilePhoto }}
+                user={{ firstName, lastName, age, about, skills, gender, profilePhoto, membershipType }}
             />
         </div>
     );

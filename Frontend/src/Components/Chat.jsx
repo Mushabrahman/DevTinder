@@ -32,7 +32,7 @@ function Chat() {
   const senderUser = userState?.user;
   const senderUserId = senderUser?._id;
   const senderFirstName = senderUser?.firstName;
-  const { profilePhoto: targetProfilePhoto, firstName: targetFirstName } = location.state || {};
+  const { profilePhoto: targetProfilePhoto, firstName: targetFirstName,  } = location.state || {};
 
   const socketRef = useRef(null);
 
@@ -186,6 +186,7 @@ function Chat() {
     if (attachments) {
       const formData = new FormData();
       formData.append("file", attachments);
+      formData.append("targetUserId", targetUserId);
       const uploadResp = await axios.post("/api/upload", formData, {
         withCredentials: true,
         headers: { "Content-Type": "multipart/form-data" },
@@ -251,7 +252,7 @@ function Chat() {
       {/* Header */}
       <div className="p-4 border-b border-gray-600 flex justify-between items-center">
         <div className="flex items-center gap-3">
-          <img src={`${BASE_URL}${targetProfilePhoto}`} alt={targetFirstName} className="w-8 h-8 rounded-full" />
+          <img src={`${targetProfilePhoto}`} alt={targetFirstName} className="w-8 h-8 rounded-full" />
           <span className="text-xl font-semibold">{targetFirstName || "Chat Partner"}</span>
         </div>
         <span className={`text-sm ${onlineUsers.includes(targetUserId) ? "text-green-500" : "text-gray-400"}`}>

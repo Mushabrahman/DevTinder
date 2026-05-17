@@ -64,7 +64,7 @@ router.post('/api/request/send/:status/:toUserId', authUser, async (req, res) =>
         });
 
     } catch (error) {
-        res.status(400).json({ message: err.message });
+        res.status(400).json({ message: error.message });
     }
 })
 
@@ -118,7 +118,7 @@ router.get('/api/request/received', authUser, async (req, res) => {
         const allRequests = await ConnectionRequest.find({
             toUserId: LogedinUser._id,
             status: "interested",
-        }).populate("fromUserId", ["firstName", "lastName", "gender", "about", "skills", "age", "profilePhoto"]);
+        }).populate("fromUserId", ["firstName", "lastName", "gender", "about", "skills", "age", "profilePhoto","membershipType","isPremium"]);
 
         if (!allRequests) {
             throw new Error("No request found");
@@ -182,8 +182,8 @@ router.get('/api/connections', authUser, async (req, res) => {
       { fromUserId: loggedInId }
     ]
   })
-  .populate("fromUserId", ["firstName","lastName","gender","about","skills","age","profilePhoto"])
-  .populate("toUserId",   ["firstName","lastName","gender","about","skills","age","profilePhoto"]);
+  .populate("fromUserId", ["firstName","lastName","gender","about","skills","age","profilePhoto","membershipType","isPremium"])
+  .populate("toUserId",   ["firstName","lastName","gender","about","skills","age","profilePhoto","membershipType","isPremium"]);
 
   const formatted = connections
     .map(conn => {

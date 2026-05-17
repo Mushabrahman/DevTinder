@@ -6,6 +6,7 @@ const multer = require('multer');
 const fs = require('fs');
 const path = require('path');
 
+
 const router = express.Router();
 
 // --- Ensure uploads directory exists ---
@@ -73,11 +74,14 @@ router.post("/api/chat", authUser, async (req, res) => {
 // Upload route
 router.post("/api/upload", authUser, upload.single("file"), (req, res) => {
   try {
+
     if (!req.file) {
       return res.status(400).json({ error: "No file uploaded" });
     }
     // Construct the public URL path
     const fileUrl = `/uploads/${req.file.filename}`;
+
+    
     return res.json({ url: fileUrl });
   } catch (err) {
     return res.status(500).json({ error: "Internal server error" });

@@ -53,6 +53,17 @@ function Navbar() {
           <p className="font-semibold text-sm sm:text-base md:text-lg">
             Welcome, {user?.user?.firstName}
           </p>
+            {user?.user?.membershipType === "Silver" && (
+                  <span className="bg-gray-400 text-white rounded-full px-2 py-[2px] text-xs">
+                    ✔
+                  </span>
+                )}
+
+                {user?.user?.membershipType === "Gold" && (
+                  <span className="bg-yellow-500 text-white rounded-full px-2 py-[2px] text-xs">
+                    ✔
+                  </span>
+                )}
 
           {/* Mobile Dropdown */}
           <div className="dropdown dropdown-end">
@@ -64,7 +75,7 @@ function Navbar() {
               <div className="w-8 sm:w-10 rounded-full">
                 <img
                   alt="Avatar"
-                  src={`${BASE_URL}${user?.user?.profilePhoto}`}
+                  src={`${user?.user?.profilePhoto}`}
                 />
               </div>
             </div>

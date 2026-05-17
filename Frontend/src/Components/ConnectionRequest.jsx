@@ -43,13 +43,13 @@ export default function ConnectionRequest() {
         }
     };
 
-     if (loading) {
-    return (
-      <div className="mt-16 flex justify-center h-full text-lg text-white">
-        Loading requests...
-      </div>
-    );
-  }
+    if (loading) {
+        return (
+            <div className="mt-16 flex justify-center h-full text-lg text-white">
+                Loading requests...
+            </div>
+        );
+    }
 
     if (error) {
         return (
@@ -73,7 +73,7 @@ export default function ConnectionRequest() {
                 Connection Requests
             </h1>
             {requests.map((ele) => {
-                const { _id, firstName, lastName, age, gender, about, profilePhoto } = ele.fromUserId;
+                const { _id, firstName, lastName, age, gender, about, profilePhoto, membershipType } = ele.fromUserId;
                 return (
                     <div
                         key={_id}
@@ -83,14 +83,29 @@ export default function ConnectionRequest() {
                             <img
                                 alt={firstName}
                                 className="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover"
-                                src={`${BASE_URL}${profilePhoto}`}
+                                src={`${profilePhoto}`}
                             />
                         </div>
 
                         <div className="flex-1 text-center sm:text-left font-semibold  gap-1 space-y-1 flex flex-col items-center sm:items-start">
-                            <h1 className="text-base sm:text-lg font-semibold mb-2">
-                                {firstName + " " + lastName}
-                            </h1>
+
+                            <div className="flex items-center gap-2 mb-2">
+                                <h1 className="text-lg sm:text-xl font-semibold caret-transparent select-none">
+                                    {firstName + " " + lastName}
+                                </h1>
+
+                                {membershipType === "Silver" && (
+                                    <span className="bg-gray-400 text-white rounded-full px-2 py-[2px] text-xs">
+                                        ✔
+                                    </span>
+                                )}
+
+                                {membershipType === "Gold" && (
+                                    <span className="bg-yellow-500 text-white rounded-full px-2 py-[2px] text-xs">
+                                        ✔
+                                    </span>
+                                )}
+                            </div>
                             {age && gender && (
                                 <h2 className="text-sm sm:text-base w-max py-1 px-3 rounded-2xl  font-light caret-transparent select-none bg-gray-700 mb-2 ">{age + ", " + gender}</h2>
                             )}

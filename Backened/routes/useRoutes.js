@@ -2,10 +2,12 @@ const express = require('express');
 const User = require("../modelSchema/useModel");
 const authUser = require('../middlewares/utils.js')
 const profileUpload = require('../middlewares/profileUploads.js')
+const uploadImage = require('../utils/fileUploads.js')
 
 const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken');
 const router = express.Router();
+const fs = require("fs");
 
 router.post('/api/signup', async (req, res) => {
     try {
@@ -90,57 +92,78 @@ router.get('/api/profile', authUser, async (req, res) => {
 });
 
 router.patch(
-  "/api/editUser",
-  authUser,
-  profileUpload.single("profilePhoto"),
-  async (req, res) => {
-    try {
-      const allowedFields = [
-        "firstName",
-        "lastName",
-        "about",
-        "skills",
-        "age",
-        "gender",
-        // Note: profilePhoto handled separately
-      ];
+    "/api/editUser",
+    authUser,
+    profileUpload.single("profilePhoto"),
+    async (req, res) => {
+        try {
+            const allowedFields = [
+                "firstName",
+                "lastName",
+                "about",
+                "skills",
+                "age",
+                "gender",
+                // Note: profilePhoto handled separately
+            ];
 
-      // Build update object
-      const updateData = {};
-      for (const key of Object.keys(req.body)) {
-        if (allowedFields.includes(key)) {
-          updateData[key] = req.body[key];
+            // Build update object
+            const updateData = {};
+            for (const key of Object.keys(req.body)) {
+                if (allowedFields.includes(key)) {
+                    updateData[key] = req.body[key];
+                }
+            }
+
+            // File upload part
+            if (req.file) {
+                // // Build the accessible URL or path for the profilePhoto
+                // // e.g., if you serve uploads statically: '/uploads/filename'
+                // updateData.profilePhoto = `/uploads/${req.file.filename}`;
+
+                const cloudinaryResponse = await uploadImage(
+                    "profilePhotos",
+                    req.file.path
+                );
+
+                // Cloudinary upload failed
+                if (cloudinaryResponse.error) {
+
+                    return res.status(500).json({
+                        message: "Cloudinary upload failed",
+                        error: cloudinaryResponse.error,
+                    });
+                }
+
+                // Save image URL in DB
+                updateData.profilePhoto =
+                    cloudinaryResponse.secure_url;
+
+                // Delete local uploaded file
+                fs.unlinkSync(req.file.path);
+            }
+
+            // Update user in DB
+            const loggedInUserId = req.user._id;
+
+            const updatedUser = await User.findByIdAndUpdate(
+                loggedInUserId,
+                { $set: updateData },
+                { new: true, runValidators: true }
+            );
+
+            if (!updatedUser) {
+                return res.status(404).json({ message: "User not found" });
+            }
+
+            return res.status(200).json({
+                message: "Profile updated successfully",
+                user: updatedUser,
+            });
+        } catch (err) {
+            return res.status(500).json({ message: "Error updating profile", error: err.message });
         }
-      }
-
-      // File upload part
-      if (req.file) {
-        // Build the accessible URL or path for the profilePhoto
-        // e.g., if you serve uploads statically: '/uploads/filename'
-        updateData.profilePhoto = `/uploads/${req.file.filename}`;
-      }
-
-      // Update user in DB
-      const loggedInUserId = req.user._id;
-
-      const updatedUser = await User.findByIdAndUpdate(
-        loggedInUserId,
-        { $set: updateData },
-        { new: true, runValidators: true }
-      );
-
-      if (!updatedUser) {
-        return res.status(404).json({ message: "User not found" });
-      }
-
-      return res.status(200).json({
-        message: "Profile updated successfully",
-        user: updatedUser,
-      });
-    } catch (err) {
-      return res.status(500).json({ message: "Error updating profile", error: err.message });
     }
-  }
 );
 
 router.post("/api/logout", async (req, res) => {

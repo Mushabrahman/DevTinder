@@ -22,18 +22,18 @@ function UserCard({ user }) {
   };
 
   // inside your component
-const getProfilePhotoSrc = () => {
-  if (user?.profilePhoto?.startsWith("/uploads/")) {
-    // Image from backend
-    return`${BASE_URL}${user?.profilePhoto}`;
-  } else if (user?.profilePhoto) {
-    // Full external URL (optional case)
-    return user?.profilePhoto;
-  } else {
-    // Default placeholder
-    return "https://cdn-icons-png.flaticon.com/512/149/149071.png";
-  }
-};
+  const getProfilePhotoSrc = () => {
+    if (user?.profilePhoto?.startsWith("/uploads/")) {
+      // Image from backend
+      return `${user?.profilePhoto}`;
+    } else if (user?.profilePhoto) {
+      // Full external URL (optional case)
+      return user?.profilePhoto;
+    } else {
+      // Default placeholder
+      return "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+    }
+  };
 
 
   return (
@@ -62,6 +62,17 @@ const getProfilePhotoSrc = () => {
         <div className="card-body text-base sm:text-lg mb-2">
           <h2 className="card-title text-xl sm:text-2xl mb-2">
             {user?.firstName + " " + user?.lastName}
+            {user?.membershipType === "Silver" && (
+              <span className="bg-gray-400 text-white rounded-full px-2 py-[2px] text-xs">
+                ✔
+              </span>
+            )}
+
+            {user?.membershipType === "Gold" && (
+              <span className="bg-yellow-500 text-white rounded-full px-2 py-[2px] text-xs">
+                ✔
+              </span>
+            )}
           </h2>
 
           <div className="w-max">

@@ -23,7 +23,7 @@ export default function ConnectionRequest() {
       dispatch(addConnections(res.data.data));
     } catch (err) {
       setError(err.message);
-    } finally{
+    } finally {
       setLoading(false);
     }
   };
@@ -63,7 +63,7 @@ export default function ConnectionRequest() {
   if (connections === null) {
     return (
       <div className="mt-16 flex justify-center h-full text-lg caret-transparent select-none text-white">
-       Loading Connections...
+        Loading Connections...
       </div>
     );
   }
@@ -82,7 +82,7 @@ export default function ConnectionRequest() {
         Connections
       </h1>
       {connections.map((ele) => {
-        const { firstName, lastName, age, gender, skills, about, _id: id, profilePhoto } = ele;
+        const { firstName, lastName, age, gender, skills, about, _id: id, profilePhoto, membershipType } = ele;
 
         const isUserOnline = onlineUsers.includes(id);
 
@@ -118,13 +118,28 @@ export default function ConnectionRequest() {
               <img
                 alt={firstName}
                 className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover cursor-default"
-                src={`${BASE_URL}${profilePhoto}`}
+                src={`${profilePhoto}`}
               />
             </div>
             <div className="flex-1 flex flex-col justify-center gap-1 text-sm sm:text-base caret-transparent select-none">
-              <h1 className="text-lg sm:text-xl font-semibold caret-transparent select-none mb-2">
-                {firstName + " " + lastName}
-              </h1>
+              <div className="flex items-center gap-2 mb-2">
+                <h1 className="text-lg sm:text-xl font-semibold caret-transparent select-none">
+                  {firstName + " " + lastName}
+                </h1>
+
+                {membershipType === "Silver" && (
+                  <span className="bg-gray-400 text-white rounded-full px-2 py-[2px] text-xs">
+                    ✔
+                  </span>
+                )}
+
+                {membershipType === "Gold" && (
+                  <span className="bg-yellow-500 text-white rounded-full px-2 py-[2px] text-xs">
+                    ✔
+                  </span>
+                )}
+              </div>
+
               {age && gender && (
                 <h2 className="text-sm sm:text-base w-max py-1 px-3 rounded-2xl  font-light caret-transparent select-none bg-gray-700 mb-1">
                   {age + ", " + gender}
@@ -133,9 +148,9 @@ export default function ConnectionRequest() {
 
               {about &&
                 (
-                    <h2 className="py-1 text-sm sm:text-base caret-transparent select-none">
-                      {about}
-                    </h2>
+                  <h2 className="py-1 text-sm sm:text-base caret-transparent select-none">
+                    {about}
+                  </h2>
                 )}
 
               {skills &&
