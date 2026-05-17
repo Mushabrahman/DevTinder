@@ -32,7 +32,7 @@ function Chat() {
   const senderUser = userState?.user;
   const senderUserId = senderUser?._id;
   const senderFirstName = senderUser?.firstName;
-  const { profilePhoto: targetProfilePhoto, firstName: targetFirstName,  } = location.state || {};
+  const { profilePhoto: targetProfilePhoto, firstName: targetFirstName, } = location.state || {};
 
   const socketRef = useRef(null);
 
@@ -194,6 +194,7 @@ function Chat() {
       uploadedUrl = uploadResp.data.url;
       setattachments(null);
       setAttachmentName("");
+      console.log({ uploadedUrl });
     }
 
     const now = new Date().toISOString();
@@ -295,18 +296,18 @@ function Chat() {
                 {msg.attachments && msg.attachments.length > 0 && (
                   <div className="mt-2">
                     {msg.attachments.map((url, idx) => (
-                      url.match(/\.(jpg|jpeg|png|gif)$/i) ? (
+                      (url.includes("image") || url.match(/\.(jpg|jpeg|png|gif)$/i)) ? (
                         <img
                           key={idx}
-                          src={`${BASE_URL}${url}`}
+                          src={`${url}`}
                           alt={`attachment ${idx}`}
                           className="max-w-[200px] rounded-lg cursor-pointer"
-                          onClick={() => setModalImage(`${BASE_URL}${url}`)}
+                          onClick={() => setModalImage(`${url}`)}
                         />
                       ) : (
                         <a
                           key={idx}
-                          href={`${BASE_URL}${url}`}
+                          href={`${url}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-white-300 font-bold underline cursor-pointer"
@@ -326,8 +327,8 @@ function Chat() {
           </div>
         ))}
         {otherUserTyping && (
-  <div className="text-sm text-gray-400 px-4 pb-1 italic">Typing...</div>
-)}
+          <div className="text-sm text-gray-400 px-4 pb-1 italic">Typing...</div>
+        )}
         <div ref={messagesEndRef} />
       </div>
 

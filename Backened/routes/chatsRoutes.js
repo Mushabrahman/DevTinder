@@ -5,6 +5,8 @@ const authUser = require('../middlewares/utils.js');
 const multer = require('multer');
 const fs = require('fs');
 const path = require('path');
+const profileUpload = require('../middlewares/profileUploads.js')
+const uploadImage = require('../utils/fileUploads.js')
 
 
 const router = express.Router();
@@ -72,17 +74,35 @@ router.post("/api/chat", authUser, async (req, res) => {
 });
 
 // Upload route
-router.post("/api/upload", authUser, upload.single("file"), (req, res) => {
+router.post("/api/upload", authUser, upload.single("file"), async (req, res) => {
   try {
 
     if (!req.file) {
       return res.status(400).json({ error: "No file uploaded" });
     }
-    // Construct the public URL path
-    const fileUrl = `/uploads/${req.file.filename}`;
 
-    
-    return res.json({ url: fileUrl });
+
+    // Cloudinary upload failed
+    // Upload to Cloudinary
+    const cloudinaryResponse = await uploadImage(
+      "chatUploads",
+      req.file.path
+    );
+
+     fs.unlinkSync(req.file.path);
+
+    // Cloudinary error check
+    if (cloudinaryResponse.error) {
+      return res.status(500).json({
+        message: "Cloudinary upload failed",
+        error: cloudinaryResponse.error,
+      });
+    }
+
+    return res.json({
+      url: cloudinaryResponse.secure_url
+    });
+
   } catch (err) {
     return res.status(500).json({ error: "Internal server error" });
   }
