@@ -32,7 +32,7 @@ function Chat() {
   const senderUser = userState?.user;
   const senderUserId = senderUser?._id;
   const senderFirstName = senderUser?.firstName;
-  const { profilePhoto: targetProfilePhoto, firstName: targetFirstName, } = location.state || {};
+  const { profilePhoto: targetProfilePhoto, firstName: targetFirstName, membershipType: targetMembershipType} = location.state || {};
 
   const socketRef = useRef(null);
 
@@ -255,6 +255,8 @@ function Chat() {
         <div className="flex items-center gap-3">
           <img src={`${targetProfilePhoto}`} alt={targetFirstName} className="w-8 h-8 rounded-full" />
           <span className="text-xl font-semibold">{targetFirstName || "Chat Partner"}</span>
+          
+
         </div>
         <span className={`text-sm ${onlineUsers.includes(targetUserId) ? "text-green-500" : "text-gray-400"}`}>
           {onlineUsers.includes(targetUserId) ? "Online" : "Offline"}

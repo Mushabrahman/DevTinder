@@ -62,15 +62,23 @@ function UserCard({ user }) {
         <div className="card-body text-base sm:text-lg mb-2">
           <h2 className="card-title text-xl sm:text-2xl mb-2">
             {user?.firstName + " " + user?.lastName}
-            {user?.membershipType === "Silver" && (
-              <span className="bg-gray-400 text-white rounded-full px-2 py-[2px] text-xs">
-                ✔
+            {user?.membershipType === "Gold" && (
+              <span>
+                <img
+                  src="/Golden.png"
+                  alt="Golden Logo"
+                  className="w-6 h-6 sm:w-8 sm:h-8"
+                />
               </span>
             )}
 
-            {user?.membershipType === "Gold" && (
-              <span className="bg-yellow-500 text-white rounded-full px-2 py-[2px] text-xs">
-                ✔
+            {user?.membershipType === "Silver" && (
+              <span>
+                 <img
+                  src="/Silver.png"
+                  alt="Silver Logo"
+                  className="w-6 h-6 sm:w-8 sm:h-8"
+                />
               </span>
             )}
           </h2>

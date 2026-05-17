@@ -128,14 +128,22 @@ export default function ConnectionRequest() {
                 </h1>
 
                 {membershipType === "Silver" && (
-                  <span className="bg-gray-400 text-white rounded-full px-2 py-[2px] text-xs">
-                    ✔
+                  <span className="">
+                    <img
+                      src="/Silver.png"
+                      alt="Silver Logo"
+                      className="w-6 h-6 sm:w-8 sm:h-8"
+                    />
                   </span>
                 )}
 
                 {membershipType === "Gold" && (
-                  <span className="bg-yellow-500 text-white rounded-full px-2 py-[2px] text-xs">
-                    ✔
+                  <span className="">
+                    <img
+                      src="/Golden.png"
+                      alt="Golden Logo"
+                      className="w-6 h-6 sm:w-8 sm:h-8"
+                    />
                   </span>
                 )}
               </div>

@@ -21,13 +21,13 @@ function Navbar() {
       dispatch(removeFeed());
       navigate('/login');
     } catch (err) {
-     
+
     }
   };
 
   return (
     <div className="navbar bg-neutral text-neutral-content shadow-sm px-4 sm:px-6">
-         <div className="flex-1 flex flex-row items-center">
+      <div className="flex-1 flex flex-row items-center">
         <Link
           to="/"
           className="cursor-pointer"
@@ -50,20 +50,30 @@ function Navbar() {
 
       {user && (
         <div className="flex items-center gap-2 sm:gap-4">
+          <span className='flex items-center gap-1'>
           <p className="font-semibold text-sm sm:text-base md:text-lg">
             Welcome, {user?.user?.firstName}
           </p>
-            {user?.user?.membershipType === "Silver" && (
-                  <span className="bg-gray-400 text-white rounded-full px-2 py-[2px] text-xs">
-                    ✔
-                  </span>
-                )}
+          {user?.user?.membershipType === "Silver" && (
+            <span>
+              <img
+                src="/Silver.png"
+                alt="Silver Logo"
+                className="w-4 h-4 sm:w-5 sm:h-5"
+              />
+            </span>
+          )}
 
-                {user?.user?.membershipType === "Gold" && (
-                  <span className="bg-yellow-500 text-white rounded-full px-2 py-[2px] text-xs">
-                    ✔
-                  </span>
-                )}
+          {user?.user?.membershipType === "Gold" && (
+            <span >
+              <img
+                src="/Golden.png"
+                alt="Golden Logo"
+               className="w-4 h-4 sm:w-5 sm:h-5"
+              />
+            </span>
+          )}
+          </span>
 
           {/* Mobile Dropdown */}
           <div className="dropdown dropdown-end">
@@ -86,7 +96,7 @@ function Navbar() {
             >
               <li>
                 <Link to="/Profile" className="justify-between text-sm sm:text-base">
-                  Profile 
+                  Profile
                 </Link>
               </li>
               <li>
