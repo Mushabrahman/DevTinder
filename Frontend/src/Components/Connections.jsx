@@ -132,7 +132,7 @@ export default function ConnectionRequest() {
                     <img
                       src="/Silver.png"
                       alt="Silver Logo"
-                      className="w-6 h-6 sm:w-8 sm:h-8"
+                       className="w-5 h-5 sm:w-6 sm:h-6"
                     />
                   </span>
                 )}
@@ -142,7 +142,7 @@ export default function ConnectionRequest() {
                     <img
                       src="/Golden.png"
                       alt="Golden Logo"
-                      className="w-6 h-6 sm:w-8 sm:h-8"
+                       className="w-5 h-5 sm:w-6 sm:h-6"
                     />
                   </span>
                 )}
@@ -178,11 +178,12 @@ export default function ConnectionRequest() {
               to={`/chat/${id}`}
               state={{
                 profilePhoto: profilePhoto,
-                firstName: firstName
+                firstName: firstName,
+                membershipType: membershipType
               }}
               className="flex justify-center items-center py-2 px-4 rounded-xl bg-pink-500 cursor-pointer hover:bg-pink-600"
             >
-              Chat
+              Chat {membershipType}
             </Link>
           </div>
         );

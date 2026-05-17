@@ -99,7 +99,7 @@ export default function ConnectionRequest() {
                                         <img
                                             src="/Silver.png"
                                             alt="Silver Logo"
-                                            className="w-6 h-6 sm:w-8 sm:h-8"
+                                            className="w-5 h-5 sm:w-6 sm:h-6"
                                         />
                                     </span>
                                 )}

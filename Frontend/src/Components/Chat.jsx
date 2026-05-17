@@ -32,7 +32,7 @@ function Chat() {
   const senderUser = userState?.user;
   const senderUserId = senderUser?._id;
   const senderFirstName = senderUser?.firstName;
-  const { profilePhoto: targetProfilePhoto, firstName: targetFirstName, membershipType: targetMembershipType} = location.state || {};
+  const { profilePhoto: targetProfilePhoto, firstName: targetFirstName, membershipType: targetMembershipType } = location.state || {};
 
   const socketRef = useRef(null);
 
@@ -252,10 +252,28 @@ function Chat() {
     <div className="card  h-[410px] sm:h-96 w-[90%] md:w-2/3 mt-10 mx-auto border border-gray-600 flex flex-col bg-black text-white rounded-lg shadow-lg">
       {/* Header */}
       <div className="p-4 border-b border-gray-600 flex justify-between items-center">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <img src={`${targetProfilePhoto}`} alt={targetFirstName} className="w-8 h-8 rounded-full" />
           <span className="text-xl font-semibold">{targetFirstName || "Chat Partner"}</span>
-          
+          {targetMembershipType === "Gold" && (
+            <span className="">
+              <img
+                src="/Golden.png"
+                alt="Golden Logo"
+                className="w-4 h-4 sm:w-5 sm:h-5"
+              />
+            </span>
+          )}
+
+          {targetMembershipType === "Silver" && (
+            <span className="">
+              <img
+                src="/Silver.png"
+                alt="Silver Logo"
+                className="w-4 h-4 sm:w-5 sm:h-5"
+              />
+            </span>
+          )}
 
         </div>
         <span className={`text-sm ${onlineUsers.includes(targetUserId) ? "text-green-500" : "text-gray-400"}`}>
