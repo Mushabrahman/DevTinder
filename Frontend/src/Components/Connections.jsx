@@ -183,7 +183,7 @@ export default function ConnectionRequest() {
               }}
               className="flex justify-center items-center py-2 px-4 rounded-xl bg-pink-500 cursor-pointer hover:bg-pink-600"
             >
-              Chat {membershipType}
+              Chat
             </Link>
           </div>
         );
