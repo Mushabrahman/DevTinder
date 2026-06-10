@@ -12,7 +12,8 @@ const initializeSocket = (server) => {
     cors: {
       origin: [
         "https://www.webtinder.in",
-        "https://webtinder.in"
+        "https://webtinder.in",
+         "https://webtinder-frontend.onrender.com"
       ],
       credentials: true,
     },
