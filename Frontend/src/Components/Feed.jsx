@@ -5,6 +5,7 @@ import { addFeed, removeFeed } from "../utils/feedSlice";
 import { addConnectionRequest } from "../utils/connectionRequestSlice";
 import UserCard from "./userCard";
 import { motion } from "framer-motion";
+import { BASE_URL } from "../config";
 
 const Feed = () => {
   const dispatch = useDispatch();
@@ -18,7 +19,7 @@ const Feed = () => {
 
     setLoading(true);
     try {
-      const res = await axios.get("/api/feed", { withCredentials: true });
+      const res = await axios.get(`${BASE_URL}/api/feed`, { withCredentials: true });
       const data = res?.data?.data;
       console.log(data);
       if (data && Array.isArray(data)) {
@@ -40,7 +41,7 @@ const Feed = () => {
   const sendRequest = async (status, user) => {
     try {
       const res = await axios.post(
-        "/api/request/send/" + status + "/" + user._id,
+        `${BASE_URL}/api/request/send/` + status + "/" + user._id,
         {},
         { withCredentials: true }
       );

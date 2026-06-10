@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import { addUser } from '../utils/userSlice';
 import { useNavigate } from 'react-router-dom';
+import { BASE_URL } from "../config";
 
 function Login() {
   const [emailId, setEmail] = useState('')
@@ -17,7 +18,7 @@ function Login() {
 
   const fetchUser = async () => {
     try {
-      const fetch = await axios.post('/api/login', {
+      const fetch = await axios.post(`${BASE_URL}/api/login`, {
         emailId,
         password
       })
@@ -31,7 +32,7 @@ function Login() {
 
   const fetchSignup = async () => {
     try {
-      await axios.post('/api/signup', { firstName, lastName, password, emailId }, { withCredentials: true });
+      await axios.post(`${BASE_URL}/api/signup`, { firstName, lastName, password, emailId }, { withCredentials: true });
       fetchUser();
       setIsLogedin(true);
     } catch (err) {

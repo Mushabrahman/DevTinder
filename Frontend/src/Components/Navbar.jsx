@@ -13,7 +13,7 @@ function Navbar() {
   const handleClick = async () => {
     try {
       await axios.post(
-        '/api/logout',
+        `${BASE_URL}/api/logout`,
         {},
         { withCredentials: true }
       );
@@ -24,6 +24,15 @@ function Navbar() {
 
     }
   };
+
+  // inside your component
+const getProfilePhotoSrc = () => {
+  if (user?.user?.profilePhoto) {
+    return user?.user?.profilePhoto;
+  }
+
+  return "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+};
 
   return (
     <div className="navbar bg-neutral text-neutral-content shadow-sm px-4 sm:px-6">
@@ -85,7 +94,7 @@ function Navbar() {
               <div className="w-8 sm:w-10 rounded-full">
                 <img
                   alt="Avatar"
-                  src={`${user?.user?.profilePhoto}`}
+                  src={getProfilePhotoSrc()}
                 />
               </div>
             </div>

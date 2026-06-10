@@ -14,7 +14,7 @@ export default function ConnectionRequest() {
     const connectionRequestFetch = async () => {
         setLoading(true);
         try {
-            const res = await axios.get("/api/request/received", {
+            const res = await axios.get(`${BASE_URL}/api/request/received`, {
                 withCredentials: true,
             });
             dispatch(addConnectionRequest(res.data.data));
@@ -33,7 +33,7 @@ export default function ConnectionRequest() {
         try {
             console.log("handleClick:", status, _id);
             const updateStatus = await axios.post(
-                "/api/request/review/" + status + "/" + _id,
+                `${BASE_URL}/api/request/review/` + status + "/" + _id,
                 {},
                 { withCredentials: true }
             )

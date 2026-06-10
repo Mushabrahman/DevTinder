@@ -19,7 +19,7 @@ export default function ConnectionRequest() {
   const connectionsFetch = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("/api/connections", { withCredentials: true });
+      const res = await axios.get(`${BASE_URL}/api/connections`, { withCredentials: true });
       dispatch(addConnections(res.data.data));
     } catch (err) {
       setError(err.message);

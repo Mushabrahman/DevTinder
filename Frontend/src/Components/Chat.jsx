@@ -109,7 +109,7 @@ function Chat() {
         isFetchingRef.current = true;
         setIsLoadingPrev(true);
         const resp = await axios.post(
-          "/api/chat",
+          `${BASE_URL}/api/chat`,
           { targetUserId, skip, limit: 20 },
           { withCredentials: true }
         );

@@ -5,6 +5,7 @@ import axios from 'axios'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { addUser } from './utils/userSlice'
+import { BASE_URL } from "./config";
 
 function Body() {
   const navigate = useNavigate();
@@ -15,7 +16,7 @@ function Body() {
     if (userData) return;
 
     try {
-      const fetchProfile = await axios.get("/api/profile", {
+      const fetchProfile = await axios.get(`${BASE_URL}/api/profile`, {
         withCredentials: true
       });
       dispatch(addUser(fetchProfile.data));

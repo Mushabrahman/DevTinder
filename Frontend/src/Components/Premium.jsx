@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { BASE_URL } from "../config";
 
 export default function Premium() {
   const [isUserPremium, setIsUserPremium] = useState(false);
@@ -45,7 +46,7 @@ export default function Premium() {
 
   const verifyPremiumUser = async () => {
     try {
-      const res = await axios.get("/api/premium/verify", { withCredentials: true });
+      const res = await axios.get(`${BASE_URL}/api/premium/verify`, { withCredentials: true });
       console.log(res.data.isPremium);
       if (res.data.isPremium) {
         setIsUserPremium(true);

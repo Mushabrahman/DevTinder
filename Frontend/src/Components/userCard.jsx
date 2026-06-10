@@ -10,7 +10,7 @@ function UserCard({ user }) {
   const handleClickFetch = async (status, id) => {
     try {
       const res = await axios.post(
-        "/api/request/send/" + status + "/" + id,
+        `${BASE_URL}/api/request/send/` + status + "/" + id,
         {},
         { withCredentials: true }
       );
@@ -22,19 +22,13 @@ function UserCard({ user }) {
   };
 
   // inside your component
-  const getProfilePhotoSrc = () => {
-    if (user?.profilePhoto?.startsWith("/uploads/")) {
-      // Image from backend
-      return `${user?.profilePhoto}`;
-    } else if (user?.profilePhoto) {
-      // Full external URL (optional case)
-      return user?.profilePhoto;
-    } else {
-      // Default placeholder
-      return "https://cdn-icons-png.flaticon.com/512/149/149071.png";
-    }
-  };
+const getProfilePhotoSrc = () => {
+  if (user?.profilePhoto) {
+    return user.profilePhoto;
+  }
 
+  return "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+};
 
   return (
     <div className="flex justify-center items-center">

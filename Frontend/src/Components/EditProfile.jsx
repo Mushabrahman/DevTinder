@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import { addUser } from "../utils/userSlice";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { BASE_URL } from "../config";
 
 function EditProfile({ user }) {
     const [firstName, setFirstName] = useState(user?.user?.firstName || "Guest");
@@ -45,7 +46,7 @@ function EditProfile({ user }) {
                 formData.append("profilePhoto", selectedFile);
             }
 
-            const res = await axios.patch("/api/editUser", formData, {
+            const res = await axios.patch(`${BASE_URL}/api/editUser`, formData, {
                 withCredentials: true,
                 headers: { "Content-Type": "multipart/form-data" },
             });
