@@ -21,7 +21,7 @@ function Login() {
       const fetch = await axios.post(`${BASE_URL}/api/login`, {
         emailId,
         password
-      })
+      }, { withCredentials: true })
       dispatch(addUser(fetch.data));
       navigate('/profile')
     }
