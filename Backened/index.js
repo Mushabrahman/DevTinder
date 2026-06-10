@@ -12,10 +12,17 @@ const http = require("http");
 const initializeSocket = require('./utils/initializeSocket');
 const { scheduleReminderEmails } = require("./utils/cronsJobs");
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "https://webtinder-frontend.onrender.com",
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 app.use(cookieParser());
 app.use("/uploads", express.static("uploads"));
+
 
 app.use(userRoutes);
 app.use(connectionRoutes);
