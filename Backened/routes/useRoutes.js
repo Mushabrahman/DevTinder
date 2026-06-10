@@ -52,10 +52,15 @@ router.post("/api/login", async (req, res) => {
         const result = bcrypt.compare(password, userPassword);
 
         if (await result) {
-            const token = jwt.sign({ id: user._id, email: user.emailId }, " your_very_secure_secret_here", {
+            const token = jwt.sign({ id: user._id, email: user.emailId }, "your_very_secure_secret_here", {
                 expiresIn: "72h"
             })
-            res.cookie('accessToken', token);
+            res.cookie("accessToken", token, {
+                httpOnly: true,
+                secure: true,        // REQUIRED on Render (HTTPS)
+                sameSite: "none",    // REQUIRED for cross-site cookies
+                path: "/"
+            });
             res.status(201).json({
                 message: "Data fetched successfully",
                 user: user
