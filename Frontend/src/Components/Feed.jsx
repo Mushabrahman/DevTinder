@@ -38,22 +38,29 @@ const Feed = () => {
     getFeed();
   }, []);
 
-  const sendRequest = async (status, user) => {
-    try {
-      console.log(status, user._id);
-      const res = await axios.post(
-        `${BASE_URL}/api/request/send/` + status + "/" + user._id,
-        {},
-        { withCredentials: true }
-      );
-      dispatch(addConnectionRequest(res.data.saveData));
-      console.log("Removing:", user._id);
-      dispatch(removeFeed(user._id));
-    } catch (err) {
-     setRequestError(err);
-    }
-  };
+const sendRequest = async (status, user) => {
+  try {
+    console.log(status, user._id);
 
+    const res = await axios.post(
+      `${BASE_URL}/api/request/send/${status}/${user._id}`,
+      {},
+      { withCredentials: true }
+    );
+
+    console.log("Response:", res.data);
+
+    dispatch(addConnectionRequest(res.data.saveData));
+
+    console.log("Removing:", user._id);
+
+    dispatch(removeFeed(user._id));
+
+  } catch (err) {
+    console.log("STATUS:", err.response?.status);
+    console.log("DATA:", err.response?.data);
+  }
+};
   const handleDragEnd = (event, info, user) => {
     const offsetX = info.offset.x;
     const velocityX = info.velocity.x;
