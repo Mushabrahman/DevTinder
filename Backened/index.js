@@ -15,7 +15,10 @@ const { scheduleReminderEmails } = require("./utils/cronsJobs");
 app.set("trust proxy", 1);
 app.use(
   cors({
-    origin: "https://webtinder-frontend.onrender.com",
+    origin: [
+      "https://webtinder-frontend.onrender.com",
+      "https://www.webtinder.in",
+    ],
     credentials: true,
   })
 );
