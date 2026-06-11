@@ -59,7 +59,7 @@ export default function Premium() {
   const handleClickPremium = async (type) => {
     try {
       const order = await axios.post(
-        "/api/payment/create",
+        `${BASE_URL}/api/payment/create`,
         { membershipType: type },
         { withCredentials: true }
       );
