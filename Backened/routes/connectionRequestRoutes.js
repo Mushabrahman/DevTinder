@@ -129,9 +129,13 @@ router.get('/api/request/received', authUser, async (req, res) => {
             throw new Error("No request found");
         }
 
+            const validRequests = allRequests.filter(
+            (request) => request.fromUserId
+        );
+
         res.status(200).json({
             message: "Data fetched successfully",
-            data: allRequests
+            data: validRequests
         })
 
     }

@@ -72,7 +72,7 @@ export default function ConnectionRequest() {
             <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white">
                 Connection Requests
             </h1>
-            {requests.map((ele) => {
+            {requests?.map((ele) => {
                 const { _id, firstName, lastName, age, gender, about, profilePhoto, membershipType } = ele.fromUserId;
                 return (
                     <div
