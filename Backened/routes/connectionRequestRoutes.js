@@ -13,6 +13,10 @@ router.post('/api/request/send/:status/:toUserId', authUser, async (req, res) =>
         const toUserId = req.params.toUserId;
         const status = req.params.status;
 
+        console.log("fromUserId:", fromUserId.toString());
+        console.log("toUserId:", toUserId);
+        console.log("status:", status);
+
         const userRequestField = new ConnectionRequest({
             fromUserId,
             toUserId,
@@ -50,7 +54,7 @@ router.post('/api/request/send/:status/:toUserId', authUser, async (req, res) =>
 
         const saveData = await userRequestField.save();
 
-         await sendEmail({
+        await sendEmail({
             toAddress: "mushabrahman02@gmail.com",
             fromAddress: "mushabrahman@webtinder.in",
             subject: `${fromUser.firstName} sends a freind request`,
@@ -63,8 +67,10 @@ router.post('/api/request/send/:status/:toUserId', authUser, async (req, res) =>
             saveData
         });
 
-    } catch (error) {
-        res.status(400).json({ message: error.message });
+    } catch (err) {
+        console.log("Status:", err.response?.status);
+        console.log("Response:", err.response?.data);
+        console.log("Error:", err);
     }
 })
 
@@ -118,7 +124,7 @@ router.get('/api/request/received', authUser, async (req, res) => {
         const allRequests = await ConnectionRequest.find({
             toUserId: LogedinUser._id,
             status: "interested",
-        }).populate("fromUserId", ["firstName", "lastName", "gender", "about", "skills", "age", "profilePhoto","membershipType","isPremium"]);
+        }).populate("fromUserId", ["firstName", "lastName", "gender", "about", "skills", "age", "profilePhoto", "membershipType", "isPremium"]);
 
         if (!allRequests) {
             throw new Error("No request found");
@@ -173,37 +179,37 @@ router.get('/api/feed', authUser, async (req, res) => {
 })
 
 router.get('/api/connections', authUser, async (req, res) => {
-  const loggedInId = req.user._id;
+    const loggedInId = req.user._id;
 
-  const connections = await ConnectionRequest.find({
-    status: "accepted",
-    $or: [
-      { toUserId: loggedInId },
-      { fromUserId: loggedInId }
-    ]
-  })
-  .populate("fromUserId", ["firstName","lastName","gender","about","skills","age","profilePhoto","membershipType","isPremium"])
-  .populate("toUserId",   ["firstName","lastName","gender","about","skills","age","profilePhoto","membershipType","isPremium"]);
-
-  const formatted = connections
-    .map(conn => {
-      const from = conn.fromUserId;
-      const to   = conn.toUserId;
-      if (!from || !to) {
-        // skip this connection because one side missing
-        return null;
-      }
-      if (String(from._id) === String(loggedInId)) {
-        return to;
-      }
-      return from;
+    const connections = await ConnectionRequest.find({
+        status: "accepted",
+        $or: [
+            { toUserId: loggedInId },
+            { fromUserId: loggedInId }
+        ]
     })
-    .filter(userObj => userObj && userObj._id);  // only keep valid user objects
+        .populate("fromUserId", ["firstName", "lastName", "gender", "about", "skills", "age", "profilePhoto", "membershipType", "isPremium"])
+        .populate("toUserId", ["firstName", "lastName", "gender", "about", "skills", "age", "profilePhoto", "membershipType", "isPremium"]);
 
-  res.status(200).json({
-    message: "Connections fetched successfully",
-    data: formatted
-  });
+    const formatted = connections
+        .map(conn => {
+            const from = conn.fromUserId;
+            const to = conn.toUserId;
+            if (!from || !to) {
+                // skip this connection because one side missing
+                return null;
+            }
+            if (String(from._id) === String(loggedInId)) {
+                return to;
+            }
+            return from;
+        })
+        .filter(userObj => userObj && userObj._id);  // only keep valid user objects
+
+    res.status(200).json({
+        message: "Connections fetched successfully",
+        data: formatted
+    });
 });
 
 
