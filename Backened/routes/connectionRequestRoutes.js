@@ -13,10 +13,6 @@ router.post('/api/request/send/:status/:toUserId', authUser, async (req, res) =>
         const toUserId = req.params.toUserId;
         const status = req.params.status;
 
-        console.log("fromUserId:", fromUserId.toString());
-        console.log("toUserId:", toUserId);
-        console.log("status:", status);
-
         const userRequestField = new ConnectionRequest({
             fromUserId,
             toUserId,

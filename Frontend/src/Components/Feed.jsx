@@ -46,6 +46,7 @@ const Feed = () => {
         { withCredentials: true }
       );
       dispatch(addConnectionRequest(res.data.saveData));
+      console.log("Removing:", user._id);
       dispatch(removeFeed(user._id));
     } catch (err) {
      setRequestError(err);
