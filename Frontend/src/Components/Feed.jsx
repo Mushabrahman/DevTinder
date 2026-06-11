@@ -41,6 +41,7 @@ const Feed = () => {
 const sendRequest = async (status, user) => {
   try {
     console.log("new",status, user._id);
+    
 
     const res = await axios.post(
       `${BASE_URL}/api/request/send/${status}/${user._id}`,
@@ -57,7 +58,7 @@ const sendRequest = async (status, user) => {
     dispatch(removeFeed(user._id));
 
   } catch (err) {
-    console.log("STATUS:", err.response?.status);
+    console.log("STATUS:", err);
     console.log("DATA:", err.response?.data);
   }
 };

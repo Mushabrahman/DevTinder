@@ -9,6 +9,7 @@ function UserCard({ user }) {
 
   const handleClickFetch = async (status, id) => {
     console.log(status, id);
+    console.log("URL:", `${BASE_URL}/api/request/send/${status}/${user._id}`);
     try {
       const res = await axios.post(
         `${BASE_URL}/api/request/send/` + status + "/" + id,
