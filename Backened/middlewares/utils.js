@@ -11,7 +11,7 @@ const authUser = async (req, res, next) => {
             return res.status(401).send("Please Login!");
         }
 
-        const decodedMessage = jwt.verify(accessToken, " your_very_secure_secret_here");
+        const decodedMessage = jwt.verify(accessToken, "your_very_secure_secret_here");
 
         const { id } = decodedMessage;
 
