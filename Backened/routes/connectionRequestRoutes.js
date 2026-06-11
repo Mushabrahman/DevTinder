@@ -50,6 +50,11 @@ router.post('/api/request/send/:status/:toUserId', authUser, async (req, res) =>
 
         const saveData = await userRequestField.save();
 
+        res.status(200).json({
+            message: "Connection Request successfully",
+            saveData
+        });
+
         await sendEmail({
             toAddress: "mushabrahman02@gmail.com",
             fromAddress: "mushabrahman@webtinder.in",
@@ -58,15 +63,13 @@ router.post('/api/request/send/:status/:toUserId', authUser, async (req, res) =>
             bodyText: `${fromUser.firstName} wants to be a freind of ${toUser.firstName}`
         })
 
-        res.status(200).json({
-            message: "Connection Request successfully",
-            saveData
-        });
-
     } catch (err) {
-        console.log("Status:", err.response?.status);
-        console.log("Response:", err.response?.data);
-        console.log("Error:", err);
+        console.error("Request failed:", err);
+
+        return res.status(500).json({
+            message: "Something went wrong",
+            error: err.message
+        });
     }
 })
 
