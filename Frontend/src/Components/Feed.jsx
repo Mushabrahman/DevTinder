@@ -40,8 +40,8 @@ const Feed = () => {
 
 const sendRequest = async (status, user) => {
   try {
-    console.log("new",status, user._id);
-    
+    console.log("neww",status, user._id);
+    console.log("URL:", `${BASE_URL}/api/request/send/${status}/${user._id}`);
 
     const res = await axios.post(
       `${BASE_URL}/api/request/send/${status}/${user._id}`,
