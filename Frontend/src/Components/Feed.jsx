@@ -40,8 +40,6 @@ const Feed = () => {
 
 const sendRequest = async (status, user) => {
   try {
-    console.log("neww",status, user._id);
-    console.log("URL:", `${BASE_URL}/api/request/send/${status}/${user._id}`);
 
     const res = await axios.post(
       `${BASE_URL}/api/request/send/${status}/${user._id}`,
@@ -49,11 +47,7 @@ const sendRequest = async (status, user) => {
       { withCredentials: true }
     );
 
-    console.log("Response:", res.data);
-
     dispatch(addConnectionRequest(res.data.saveData));
-
-    console.log("Removing:", user._id);
 
     dispatch(removeFeed(user._id));
 
