@@ -42,7 +42,7 @@ paymentRouter.post("/api/payment/create", authUser, async (req, res) => {
         res.json({
             success: true,
             payment: savedPayment.toJSON(),
-            keyId: "rzp_test_RLOCIWua1jzG2D"
+            keyId: process.env.RAZORPAYKEY
         });
     } catch (err) {
         console.error("Error creating order:", err);
