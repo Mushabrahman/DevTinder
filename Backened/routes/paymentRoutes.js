@@ -57,17 +57,20 @@ paymentRouter.post("/api/payment/webhook", async (req, res) => {
     try {
         console.log("🔥 WEBHOOK HIT");
 
-        const secret = process.env.WEBHOOKSIGN;
         const signature = req.headers["x-razorpay-signature"];
+        const secret = process.env.WEBHOOKSIGN;
 
-        const rawBody = req.body.toString(); // IMPORTANT (Buffer → string)
+        // req.body is BUFFER because of express.raw()
+        const rawBody = req.body.toString("utf8");
+
+        console.log("RAW BODY:", rawBody);
 
         const expectedSignature = crypto
             .createHmac("sha256", secret)
             .update(rawBody)
             .digest("hex");
 
-        console.log("signature match:", expectedSignature === signature);
+        console.log("Signature Match:", expectedSignature === signature);
 
         if (expectedSignature !== signature) {
             return res.status(400).json({ msg: "Invalid signature" });
@@ -75,6 +78,8 @@ paymentRouter.post("/api/payment/webhook", async (req, res) => {
 
         const body = JSON.parse(rawBody);
         const paymentDetails = body.payload.payment.entity;
+
+        console.log("ORDER ID:", paymentDetails.order_id);
 
         const payment = await Payment.findOne({
             razorpay_order_id: paymentDetails.order_id
@@ -101,7 +106,7 @@ paymentRouter.post("/api/payment/webhook", async (req, res) => {
         return res.status(200).json({ msg: "success" });
 
     } catch (err) {
-        console.log(err);
+        console.log("WEBHOOK ERROR:", err);
         return res.status(500).json({ msg: "server error" });
     }
 });
