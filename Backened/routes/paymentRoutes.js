@@ -39,6 +39,8 @@ paymentRouter.post("/api/payment/create", authUser, async (req, res) => {
 
         const savedPayment = await dbOrder.save();
 
+        console.log("Payment created;;;")
+
         res.json({
             success: true,
             payment: savedPayment.toJSON(),
