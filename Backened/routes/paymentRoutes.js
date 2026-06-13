@@ -53,17 +53,33 @@ paymentRouter.post("/api/payment/create", authUser, async (req, res) => {
 paymentRouter.post("/api/payment/webhook", async (req, res) => {
     try {
 
+        console.log("========== WEBHOOK HIT ==========");
+
+        console.log("Headers:", req.headers);
+
+
         const webhookSignature = req.get("X-Razorpay-Signature");
+
+        console.log("Received Signature:", webhookSignature);
+        console.log("Webhook Secret Exists:", !!process.env.WEBHOOKSIGN);
+        console.log("Event:", req.body?.event);
 
         const isWebhookValid = validateWebhookSignature(JSON.stringify(req.body), webhookSignature, process.env.WEBHOOKSIGN);
 
+        console.log("Signature Valid:", isWebhookValid);
+
         if (!isWebhookValid) {
-          return  res.status(400).json({ msg: "Webhook signature is invalid" });
+            return res.status(400).json({ msg: "Webhook signature is invalid" });
         }
 
         const paymentDetails = req.body.payload.payment.entity
 
+        console.log("Payment Details:", paymentDetails);
+
+
         const payment = await Payment.findOne({ razorpay_order_id: paymentDetails.order_id })
+
+         console.log("Mongo Payment:", payment);
 
         payment.status = paymentDetails.status;
 
