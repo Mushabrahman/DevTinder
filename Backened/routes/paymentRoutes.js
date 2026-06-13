@@ -6,7 +6,6 @@ const Payment = require("../modelSchema/paymentModel.js");
 const { membershipAmount } = require("../utils/constants.js");
 const { validateWebhookSignature } = require('razorpay/dist/utils/razorpay-utils')
 const User = require("../modelSchema/useModel");
-const crypto = require("crypto");
 
 paymentRouter.post("/api/payment/create", authUser, async (req, res) => {
     try {
@@ -40,8 +39,6 @@ paymentRouter.post("/api/payment/create", authUser, async (req, res) => {
 
         const savedPayment = await dbOrder.save();
 
-        console.log("Payment created;;;")
-
         res.json({
             success: true,
             payment: savedPayment.toJSON(),
@@ -55,61 +52,45 @@ paymentRouter.post("/api/payment/create", authUser, async (req, res) => {
 
 paymentRouter.post("/api/payment/webhook", async (req, res) => {
     try {
-        console.log("🔥 WEBHOOK HIT");
 
-        const signature = req.headers["x-razorpay-signature"];
-        const secret = process.env.WEBHOOKSIGN;
+        const webhookSignature = req.get("X-Razorpay-Signature");
 
-        // req.body is BUFFER because of express.raw()
-        const rawBody = req.body.toString("utf8");
+        const isWebhookValid = validateWebhookSignature(JSON.stringify(req.body), webhookSignature, process.env.WEBHOOKSIGN);
 
-        console.log("RAW BODY:", rawBody);
-
-        const expectedSignature = crypto
-            .createHmac("sha256", secret)
-            .update(rawBody)
-            .digest("hex");
-
-        console.log("Signature Match:", expectedSignature === signature);
-
-        if (expectedSignature !== signature) {
-            return res.status(400).json({ msg: "Invalid signature" });
+        if (!isWebhookValid) {
+          return  res.status(400).json({ msg: "Webhook signature is invalid" });
         }
 
-        const body = JSON.parse(rawBody);
-        const paymentDetails = body.payload.payment.entity;
+        const paymentDetails = req.body.payload.payment.entity
 
-        console.log("ORDER ID:", paymentDetails.order_id);
-
-        const payment = await Payment.findOne({
-            razorpay_order_id: paymentDetails.order_id
-        });
-
-        console.log("Mongo Payment:", payment);
-
-        if (!payment) {
-            return res.status(404).json({ msg: "Payment not found" });
-        }
+        const payment = await Payment.findOne({ razorpay_order_id: paymentDetails.order_id })
 
         payment.status = paymentDetails.status;
-        payment.razorpay_payment_id = paymentDetails.id;
 
         await payment.save();
 
-        const user = await User.findById(payment.userId);
+        const user = await User.findOne({ _id: payment.userId });
+
 
         user.isPremium = true;
         user.membershipType = payment.notes.membershipType;
 
         await user.save();
 
-        return res.status(200).json({ msg: "success" });
+        if (req.body.event == "payment.captured") {
 
-    } catch (err) {
-        console.log("WEBHOOK ERROR:", err);
-        return res.status(500).json({ msg: "server error" });
+        }
+
+        if (req.body.event == "payment.failed") {
+
+        }
+
+        res.status(200).json({ msg: "Webhook received successfully" });
+
+    } catch (error) {
+        console.log(error);
     }
-});
+})
 
 paymentRouter.get("/api/premium/verify", authUser, async (req, res) => {
     try {
