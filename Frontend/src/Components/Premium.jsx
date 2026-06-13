@@ -46,10 +46,12 @@ export default function Premium() {
 
   const verifyPremiumUser = async () => {
     try {
+      // ✅ 1. INSTANT UI UPDATE (no waiting for webhook)
+        setIsUserPremium(true);
       const res = await axios.get(`${BASE_URL}/api/premium/verify`, { withCredentials: true });
       console.log(res.data.isPremium);
-      if (res.data.isPremium) {
-        setIsUserPremium(true);
+      if (!res.data.isPremium) {
+        setIsUserPremium(false);
       }
     } catch (err) {
       console.error("Error verifying premium user:", err);
